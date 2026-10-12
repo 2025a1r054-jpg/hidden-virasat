@@ -1,0 +1,114 @@
+[
+  {
+    "slug": "mubarak-mandi-palace",
+    "name": "Mubarak Mandi Heritage Complex",
+    "filename": "mubarak-mandi.jpg",
+    "path": "/static/images/mubarak-mandi.jpg",
+    "credit": "Mubarak Mandi Complex, Jammu.jpg (Source: Wikimedia Commons, CC BY-SA 3.0)",
+    "bytes": 1175672
+  },
+  {
+    "slug": "bahu-fort",
+    "name": "Bahu Fort",
+    "filename": "bahu-fort.jpg",
+    "path": "/static/images/bahu-fort.jpg",
+    "credit": "BAHU FORT JAMMU & KASHMIR.jpg (Source: Wikimedia Commons, CC BY-SA 4.0)",
+    "bytes": 858720
+  },
+  {
+    "slug": "bagh-e-bahu",
+    "name": "Bagh-e-Bahu & Aquarium",
+    "filename": "bagh-e-bahu.jpg",
+    "path": "/static/images/bagh-e-bahu.jpg",
+    "credit": "Historic heritage sites of Madhya Pradesh with GPS coordinates.jpg (Source: Wikimedia Commons, CC BY-SA 4.0)",
+    "bytes": 1067842
+  },
+  {
+    "slug": "amar-mahal-palace-museum",
+    "name": "Amar Mahal Palace Museum",
+    "filename": "amar-mahal.jpg",
+    "path": "/static/images/amar-mahal.jpg",
+    "credit": "A plaque in the Amar Mahal Museum.jpg (Source: Wikimedia Commons, CC BY-SA 3.0)",
+    "bytes": 1066702
+  },
+  {
+    "slug": "dogra-art-museum",
+    "name": "Dogra Art Museum",
+    "filename": "dogra-art-museum.jpg",
+    "path": "/static/images/dogra-art-museum.jpg",
+    "credit": "Basohli Miniature showing two ladies, circa 19th century CE, Basohli School of Art, Private collection.jpg (Source: Wikimedia Commons, CC BY-SA 4.0)",
+    "bytes": 89681
+  },
+  {
+    "slug": "akhnoor-fort-jia-pota",
+    "name": "Akhnoor Fort & Jia Pota Ghat",
+    "filename": "akhnoor-fort.jpg",
+    "path": "/static/images/akhnoor-fort.jpg",
+    "credit": "Akhnoor Fort.JPG (Source: Wikimedia Commons, CC BY-SA 3.0)",
+    "bytes": 3788256
+  },
+  {
+    "slug": "purmandal-chhota-kashi",
+    "name": "Purmandal (Chhota Kashi)",
+    "filename": "purmandal.jpg",
+    "path": "/static/images/purmandal.jpg",
+    "credit": "Art-print of the Purmandal Mela, by Charles Hardinge.png (Source: Wikimedia Commons, Public domain)",
+    "bytes": 2916202
+  },
+  {
+    "slug": "raghunath-bazaar",
+    "name": "Raghunath Bazaar",
+    "filename": "raghunath-bazaar.jpg",
+    "path": "/static/images/raghunath-bazaar.jpg",
+    "credit": "12th-century Samaveda samhita and brahmanam, Aranyaganam Prapathaka 1-6, page 1 and 2 front, Raghunath temple archives, Jammu.jpg (Source: Wikimedia Commons, CC BY-SA 4.0)",
+    "bytes": 1168585
+  },
+  {
+    "slug": "hari-market-food-lanes",
+    "name": "Hari Market & Pacca Danga",
+    "filename": "hari-market.jpg",
+    "path": "/static/images/hari-market.jpg",
+    "credit": "Butcher's Bazaar, Jammu, ca.1875-ca.1940 (imp-cswc-GB-237-CSWC47-LS10-028).jpg (Source: Wikimedia Commons, Public domain)",
+    "bytes": 2124700
+  },
+  {
+    "slug": "dogra-calico-printing-crafts",
+    "name": "Dogra Calico Printing",
+    "filename": "dogra-calico-printing.jpg",
+    "path": "/static/images/dogra-calico-printing.jpg",
+    "credit": "Printing Block (India), 19th century (CH 18412039).jpg (Source: Wikimedia Commons, Public domain)",
+    "bytes": 6445071
+  },
+  {
+    "slug": "dogra-culinary-trail",
+    "name": "Jammu Dogra Culinary Trail",
+    "filename": "dogra-culinary-trail.jpg",
+    "path": "/static/images/dogra-culinary-trail.jpg",
+    "credit": "Rajma, kidney beans, served with chawal, rice.jpg (Source: Wikimedia Commons, CC BY 2.0)",
+    "bytes": 2709523
+  },
+  {
+    "slug": "peer-kho-cave-temple",
+    "name": "Peer Kho Cave Temple",
+    "filename": "peer-kho.jpg",
+    "path": "/static/images/peer-kho.jpg",
+    "credit": "Computer the Stanford Encyclopedia of Philosophy runs on.jpg (Source: Wikimedia Commons, CC0)",
+    "bytes": 2069521
+  },
+  {
+    "slug": "krimchi-ancient-temples",
+    "name": "Krimchi Ancient Temples",
+    "filename": "krimchi-temples.jpg",
+    "path": "/static/images/krimchi-temples.jpg",
+    "credit": "Krimchi Temples, Udhampur.jpg (Source: Wikimedia Commons, CC BY-SA 4.0)",
+    "bytes": 16968477
+  },
+  {
+    "slug": "suchetgarh-border-heritage",
+    "name": "Suchetgarh Border Heritage",
+    "filename": "suchetgarh-border.jpg",
+    "path": "/static/images/suchetgarh-border.jpg",
+    "credit": "Sham Lal Choudhary.jpg (Source: Wikimedia Commons, CC BY 4.0)",
+    "bytes": 60125
+  }
+]

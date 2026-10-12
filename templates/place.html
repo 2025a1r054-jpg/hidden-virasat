@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}{{ place.name }} — Hidden Virasat Jammu{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 5rem;">
+  <!-- Breadcrumb & Navigation -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="font-size: 0.85rem; color: #736474;">
+      <a href="/" style="color: var(--mauve);">Home</a> &gt; 
+      <a href="/explore" style="color: var(--mauve);">Explore</a> &gt; 
+      <span>{{ place.name }}</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/explore" class="btn btn-secondary btn-sm">← Back to Explore</a>
+      <button class="card-add-btn btn-sm" data-place-id="{{ place.id }}" data-place-name="{{ place.name }}">
+        + Add to Trip
+      </button>
+    </div>
+  </div>
+
+  <!-- Hero Cover Photo Banner -->
+  <div class="place-detail-hero">
+    <img 
+      src="{{ place.image_url }}" 
+      alt="{{ place.name }}"
+      onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+    >
+    <div class="place-detail-hero-gradient">
+      <div>
+        <span class="badge badge-mauve" style="margin-bottom: 0.75rem; background: rgba(255,255,255,0.25); color: #FFF; border: none;">
+          {{ place.category }}
+        </span>
+        <h1 class="place-detail-title">{{ place.name }}</h1>
+        <div class="place-meta-bar">
+          <span>📍 {{ place.location }}</span>
+          <span>⏱️ Approx. Duration: <strong>{{ place.visit_duration_label }}</strong></span>
+          <span>🗓️ Best Time: <strong>{{ place.best_time }}</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo Attribution Caption -->
+  <div style="font-size: 0.75rem; color: #7F7180; margin-top: -1.75rem; margin-bottom: 2.5rem; text-align: right;">
+    📸 Photo Archive: <em>{{ place.image_caption }}</em> (Source: {{ place.image_credit }})
+  </div>
+
+  <!-- Live Micro-Weather Banner for this Landmark -->
+  <div id="place-live-weather" class="weather-banner" style="margin-bottom: 2.5rem;">
+    <!-- Injected by weather.js using exact place coordinates -->
+  </div>
+
+  <!-- Main Content Layout -->
+  <div class="detail-content-layout">
+    <!-- Left Column: Rich Editorial & Historical Background -->
+    <div>
+      <!-- Introduction & History -->
+      <section class="editorial-block">
+        <span class="eyebrow">Origins & Dynasty</span>
+        <h3>Historical Background</h3>
+        <p style="font-size: 1.05rem; line-height: 1.7; color: #433744; margin-bottom: 1.5rem;">
+          {{ place.short_desc }}
+        </p>
+        <p style="line-height: 1.7; color: #4E404F;">
+          {{ place.history }}
+        </p>
+      </section>
+
+      <!-- Cultural Significance -->
+      <section class="editorial-block">
+        <span class="eyebrow">Heritage Value</span>
+        <h3>Cultural Significance</h3>
+        <p style="line-height: 1.7; color: #4E404F;">
+          {{ place.cultural_significance }}
+        </p>
+
+        <!-- Lesser Known Facts Callout -->
+        <div class="callout-box">
+          <div class="callout-title">Lesser-Known Chronicle & Arcana</div>
+          <p style="margin: 0; font-size: 0.95rem; color: var(--deep-plum); line-height: 1.6;">
+            {{ place.lesser_known_facts }}
+          </p>
+        </div>
+      </section>
+
+      <!-- Things to See & Experience -->
+      <section class="editorial-block">
+        <span class="eyebrow">Highlights</span>
+        <h3>Things to See & Experience</h3>
+        <p style="line-height: 1.7; color: #4E404F;">
+          {{ place.things_to_see }}
+        </p>
+
+        {% if tags %}
+        <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          {% for tag in tags %}
+          <span style="background: var(--soft-grey-light); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-size: 0.75rem; color: var(--mauve-dark); font-weight: 600;">
+            #{{ tag }}
+          </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </section>
+
+      <!-- Visitor Tips & Accessibility -->
+      <section class="editorial-block">
+        <span class="eyebrow">Practical Guidance</span>
+        <h3>Visitor Tips & Accessibility</h3>
+        <p style="line-height: 1.65; color: #4E404F;">
+          {{ place.tips_accessibility }}
+        </p>
+      </section>
+    </div>
+
+    <!-- Right Column: Location Card, Interactive Mini-Map, Directions, Nearby Gems -->
+    <div>
+      <!-- Location & Direction Card -->
+      <div class="sidebar-card">
+        <span class="eyebrow">Cartography</span>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Coordinates & Access</h3>
+        <p style="font-size: 0.88rem; color: #584A59; margin-bottom: 0.75rem;">
+          <strong>Address:</strong> {{ place.address }}
+        </p>
+        <p style="font-size: 0.82rem; color: #756776; margin-bottom: 1rem;">
+          GPS: {{ place.latitude }}° N, {{ place.longitude }}° E
+        </p>
+
+        <!-- Directions CTA Button -->
+        <a 
+          href="https://www.google.com/maps/dir/?api=1&destination={{ place.latitude }},{{ place.longitude }}" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="btn btn-primary btn-sm" 
+          style="width: 100%; text-align: center; margin-bottom: 1rem;"
+        >
+          🧭 Open Satellite Navigation
+        </a>
+
+        <!-- Mini Interactive Leaflet Map for this spot -->
+        <div id="place-detail-map" class="mini-map-container"></div>
+      </div>
+
+      <!-- Nearby Heritage Gems -->
+      <div class="sidebar-card">
+        <span class="eyebrow">Proximity Highlights</span>
+        <h3 style="font-size: 1.35rem; margin-bottom: 1rem;">Nearby Sanctuaries</h3>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          {% for nb in nearby_places %}
+          <div style="display: flex; gap: 0.85rem; align-items: center;">
+            <img 
+              src="{{ nb.image_url }}" 
+              alt="{{ nb.name }}" 
+              style="width: 64px; height: 64px; border-radius: var(--radius-sm); object-fit: cover;"
+              onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+            >
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 0.7rem; color: var(--mauve); text-transform: uppercase; font-weight: 700;">
+                {{ nb.category }}
+              </div>
+              <h4 style="font-size: 0.95rem; margin-bottom: 2px;">
+                <a href="/places/{{ nb.slug }}" style="color: var(--deep-plum);">{{ nb.name }}</a>
+              </h4>
+              <div style="font-size: 0.78rem; color: #7B6E7D;">
+                🚗 ~{{ nb.distance_km }} km away
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Quick Action Card -->
+      <div class="sidebar-card" style="background: linear-gradient(135deg, var(--mauve-light), var(--dusty-pink-light)); text-align: center;">
+        <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Include in Your Journey</h4>
+        <p style="font-size: 0.85rem; color: #5C4F5D; margin-bottom: 1.25rem;">
+          Add {{ place.name }} to your travel basket and let our recommendation engine craft a seamless day schedule.
+        </p>
+        <button class="card-add-btn" data-place-id="{{ place.id }}" data-place-name="{{ place.name }}" style="padding: 0.6rem 1.25rem; font-size: 0.88rem;">
+          + Add to My Plan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const lat = {{ place.latitude }};
+    const lon = {{ place.longitude }};
+    const placeName = {{ place.name|tojson }};
+
+    // 1. Fetch live weather for this location
+    loadLiveWeather('place-live-weather', lat, lon, placeName);
+
+    // 2. Initialize Mini Map
+    const mapEl = document.getElementById('place-detail-map');
+    if (mapEl) {
+      const map = L.map('place-detail-map', {
+        center: [lat, lon],
+        zoom: 14,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 18
+      }).addTo(map);
+
+      L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup(`<strong>${placeName}</strong><br><span style="font-size:0.75rem;">${lat}, ${lon}</span>`)
+        .openPopup();
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Personalized Trip Planner — HIDDEN VIRASAT{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 3.5rem;">
+  <div class="container">
+    <!-- Header -->
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem;">
+      <div style="max-width: 720px;">
+        <span class="eyebrow">Smart Cultural Recommendation</span>
+        <h1 style="font-size: 2.75rem; margin-bottom: 0.5rem;">Craft Your Jammu Virasat Trail</h1>
+        <p style="font-size: 1.05rem; color: #584A59; margin: 0;">
+          Design an intelligent, geographically clustered itinerary based on your available days, pace, and cultural passions.
+        </p>
+      </div>
+
+      <div>
+        <button id="view-saved-trips-btn" class="btn btn-secondary">
+          📜 View Saved Itineraries
+        </button>
+      </div>
+    </div>
+
+    <!-- Planner Input Form -->
+    <div class="planner-form-card">
+      <form id="planner-form">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+          
+          <!-- 1. Duration -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">🗓️ Trip Duration</label>
+            <div class="radio-pill-group">
+              <input type="radio" id="dur-1" name="duration" value="1" class="radio-pill-input">
+              <label for="dur-1" class="radio-pill-label">1 Day Express</label>
+
+              <input type="radio" id="dur-2" name="duration" value="2" class="radio-pill-input" checked>
+              <label for="dur-2" class="radio-pill-label">2 Days Classic</label>
+
+              <input type="radio" id="dur-3" name="duration" value="3" class="radio-pill-input">
+              <label for="dur-3" class="radio-pill-label">3 Days Immersive</label>
+            </div>
+          </div>
+
+          <!-- 2. Pacing -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">⚡ Preferred Travel Pace</label>
+            <div class="radio-pill-group">
+              <input type="radio" id="pace-rel" name="pace" value="relaxed" class="radio-pill-input">
+              <label for="pace-rel" class="radio-pill-label">Relaxed (2 stops/day)</label>
+
+              <input type="radio" id="pace-bal" name="pace" value="balanced" class="radio-pill-input" checked>
+              <label for="pace-bal" class="radio-pill-label">Balanced (3 stops/day)</label>
+
+              <input type="radio" id="pace-pak" name="pace" value="packed" class="radio-pill-input">
+              <label for="pace-pak" class="radio-pill-label">Packed (4+ stops/day)</label>
+            </div>
+          </div>
+
+          <!-- 3. Starting Hub -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">📍 Starting Point / Base Area</label>
+            <div class="radio-pill-group">
+              <input type="radio" id="hub-old" name="start_area" value="old-city" class="radio-pill-input" checked>
+              <label for="hub-old" class="radio-pill-label">Old City / Raghunath</label>
+
+              <input type="radio" id="hub-bahu" name="start_area" value="bahu-fort" class="radio-pill-input">
+              <label for="hub-bahu" class="radio-pill-label">Bahu Fort / Tawi Bank</label>
+
+              <input type="radio" id="hub-rail" name="start_area" value="railway" class="radio-pill-input">
+              <label for="hub-rail" class="radio-pill-label">Jammu Tawi Station</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Cultural Interests (Multi-select) -->
+        <div class="form-group">
+          <label class="form-label">🎨 Select Cultural Interests (Choose any that inspire you)</label>
+          <div class="interests-grid">
+            <div>
+              <input type="checkbox" id="int-heritage" name="interests" value="heritage" class="radio-pill-input interest-checkbox" checked>
+              <label for="int-heritage" class="interest-checkbox-label">
+                <span>🏰</span>
+                <span>Forts & Palaces</span>
+              </label>
+            </div>
+            <div>
+              <input type="checkbox" id="int-spirituality" name="interests" value="spirituality" class="radio-pill-input interest-checkbox" checked>
+              <label for="int-spirituality" class="interest-checkbox-label">
+                <span>🛕</span>
+                <span>Spiritual & Temples</span>
+              </label>
+            </div>
+            <div>
+              <input type="checkbox" id="int-food" name="interests" value="food" class="radio-pill-input interest-checkbox" checked>
+              <label for="int-food" class="interest-checkbox-label">
+                <span>🧀</span>
+                <span>Dogra Food & Kalari</span>
+              </label>
+            </div>
+            <div>
+              <input type="checkbox" id="int-shopping" name="interests" value="shopping" class="radio-pill-input interest-checkbox">
+              <label for="int-shopping" class="interest-checkbox-label">
+                <span>🛍️</span>
+                <span>Bazaars & Dry Fruits</span>
+              </label>
+            </div>
+            <div>
+              <input type="checkbox" id="int-crafts" name="interests" value="crafts" class="radio-pill-input interest-checkbox">
+              <label for="int-crafts" class="interest-checkbox-label">
+                <span>🧵</span>
+                <span>Dogra Calico & Crafts</span>
+              </label>
+            </div>
+            <div>
+              <input type="checkbox" id="int-nature" name="interests" value="nature" class="radio-pill-input interest-checkbox">
+              <label for="int-nature" class="interest-checkbox-label">
+                <span>🌿</span>
+                <span>Riverfronts & Nature</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--soft-grey-light);">
+          <div style="font-size: 0.82rem; color: #7B6E7D;">
+            💡 <em>Our transparent recommendation logic groups nearby places using the Haversine formula to minimize travel exhaustion.</em>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>✨ Generate My Optimized Itinerary</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Generated Itinerary Container -->
+    <div id="planner-results">
+      <!-- Populated by planner.js -->
+    </div>
+  </div>
+</section>
+
+<!-- Save Trip Modal -->
+<div id="save-trip-modal" class="modal-backdrop">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h3 style="font-size: 1.4rem;">Save Itinerary to Journal</h3>
+      <button type="button" class="modal-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+    <form id="save-trip-form">
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: #695B6A; margin-bottom: 1.5rem;">
+          Your customized itinerary will be permanently saved into the SQLite database. You can retrieve, review, or reload it anytime.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="save-trip-title">Itinerary Title</label>
+          <input type="text" id="save-trip-title" class="explore-search-input" style="padding-left: 1rem;" placeholder="e.g., Weekend Dogra Heritage & Food Trail" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="save-traveler-name">Traveler / Group Name</label>
+          <input type="text" id="save-traveler-name" class="explore-search-input" style="padding-left: 1rem;" placeholder="e.g., Mahan & Friends" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm modal-close-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm">Confirm & Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Saved Trips Modal -->
+<div id="saved-trips-modal" class="modal-backdrop">
+  <div class="modal-window" style="max-width: 720px;">
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow" style="margin-bottom: 0;">SQLite Archives</span>
+        <h3 style="font-size: 1.4rem;">Saved Cultural Journeys</h3>
+      </div>
+      <button type="button" class="modal-close-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="saved-trips-list">
+        <!-- Populated by planner.js -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm modal-close-btn">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/planner.js') }}"></script>
+{% endblock %}

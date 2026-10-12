@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}HIDDEN VIRASAT — Discover the Soul of Jammu{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <span class="hero-tagline">"Beyond the Famous. Into the Forgotten."</span>
+    <h1 class="hero-title">HIDDEN <span>VIRASAT</span></h1>
+    <p class="hero-subtitle">
+      Discover hidden heritage, local traditions, forgotten stories and the living culture of Jammu.
+    </p>
+
+    <!-- Search Bar -->
+    <div style="margin-bottom: 2.5rem;">
+      <form action="/explore" method="GET" class="hero-search-wrapper">
+        <span style="font-size: 1.1rem; margin-right: 0.5rem;">🔍</span>
+        <input 
+          type="text" 
+          name="q" 
+          class="hero-search-input" 
+          placeholder="Search forgotten forts, kalari cheese, Basohli art, or bazaars..."
+          aria-label="Search places and experiences"
+        >
+        <button type="submit" class="hero-search-btn">Discover</button>
+      </form>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="hero-actions">
+      <a href="/explore" class="btn btn-primary">
+        <span>Explore Hidden Places</span>
+        <span>→</span>
+      </a>
+      <a href="/planner" class="btn btn-secondary">
+        <span>🧭 Plan My Journey</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Heritage Quick Stats Ribbon -->
+<section class="heritage-ribbon">
+  <div class="container stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">3,000+</div>
+      <div class="stat-label">Years of Living Lore</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">15+</div>
+      <div class="stat-label">Curated Heritage Gems</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Cultural Dimensions</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Factual Dogra History</div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Weather & Atmospheric Banner -->
+<section class="section-sm">
+  <div class="container">
+    <div id="home-live-weather" class="weather-banner">
+      <!-- Injected by weather.js -->
+    </div>
+  </div>
+</section>
+
+<!-- Featured Hidden Gems Section -->
+<section class="section" style="padding-top: 1rem;">
+  <div class="container">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="eyebrow">Handpicked Sanctuaries</span>
+        <h2>Featured Hidden Gems</h2>
+        <p style="margin: 0; color: #695B6A;">Timeless palaces, subterranean shrines, and mountain viewpoints untouched by crowds.</p>
+      </div>
+      <a href="/explore" class="btn btn-outline btn-sm">View All 15 Entries →</a>
+    </div>
+
+    <div class="cards-grid">
+      {% for place in featured_places %}
+      <article class="place-card">
+        <div class="card-media">
+          <img 
+            src="{{ place.image_url }}" 
+            alt="{{ place.name }}" 
+            class="card-img" 
+            loading="lazy"
+            onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+          >
+          <span class="badge badge-mauve card-badge-top">{{ place.category }}</span>
+          <span class="card-duration-badge">⏱️ {{ place.visit_duration_label }}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-location">
+            <span>📍</span>
+            <span>{{ place.location }}</span>
+          </div>
+          <h3 class="card-title">{{ place.name }}</h3>
+          <p class="card-desc">{{ place.short_desc }}</p>
+          <div class="card-footer">
+            <a href="/places/{{ place.slug }}" class="btn btn-primary btn-sm">View Details</a>
+            <button class="card-add-btn" data-place-id="{{ place.id }}" data-place-name="{{ place.name }}">
+              + Add to Trip
+            </button>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Stories Carved in Time Section -->
+<section class="section" style="background: var(--soft-grey-light);">
+  <div class="container">
+    <div style="text-align: center; max-width: 650px; margin: 0 auto 3rem;">
+      <span class="eyebrow">Dogra Literary Chronicle</span>
+      <h2>Stories Carved in Time</h2>
+      <p style="color: #635564;">
+        Behind every sandstone battlement, secret subterranean cavern, and painted folio lies a living voice.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      {% for story in stories %}
+      <article class="story-card">
+        <div class="card-media" style="aspect-ratio: 16/9;">
+          <img 
+            src="{{ story.image_url }}" 
+            alt="{{ story.title }}" 
+            class="card-img" 
+            loading="lazy"
+            onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+          >
+        </div>
+        <div class="story-card-body">
+          <div class="story-meta">
+            <span>{{ story.category }}</span>
+            <span>•</span>
+            <span>{{ story.read_time }}</span>
+          </div>
+          <h3 class="story-title">{{ story.title }}</h3>
+          <p class="story-summary">{{ story.summary }}</p>
+          <div style="margin-top: auto;">
+            <a href="/stories" class="story-read-link">
+              <span>Read Full Story</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2.5rem;">
+      <a href="/stories" class="btn btn-secondary">Explore All Local Stories →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Dogra Art, Crafts, Food and Living Traditions -->
+<section class="section">
+  <div class="container">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 3.5rem;">
+      <span class="eyebrow">Living Culture of Duggar</span>
+      <h2>Crafted Hands & Sacred Flavors</h2>
+      <p style="color: #615362;">
+        Jammu is not merely a transit stop—it is a proud realm of centuries-old block printers, miniature painters, and mountain cheese masters.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+      <!-- Feature 1: Miniature Art -->
+      <div style="background: var(--white); padding: 2rem; border-radius: var(--radius-md); border: var(--border-subtle); box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
+        <div style="font-size: 2.2rem; margin-bottom: 1rem;">🎨</div>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Basohli Miniatures</h3>
+        <p style="font-size: 0.9rem; color: #584A59; flex: 1;">
+          Fiery mustard yellow backgrounds, lotus-shaped eyes, and jewel-beetle wing emeralds. The most daring school of Indian Pahari painting.
+        </p>
+        <a href="/places/dogra-art-museum" style="font-size: 0.85rem; font-weight: 600; color: var(--mauve);">
+          Discover at Dogra Museum →
+        </a>
+      </div>
+
+      <!-- Feature 2: Kalari Cheese -->
+      <div style="background: var(--white); padding: 2rem; border-radius: var(--radius-md); border: var(--border-subtle); box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
+        <div style="font-size: 2.2rem; margin-bottom: 1rem;">🧀</div>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">The Soul of Kalari</h3>
+        <p style="font-size: 0.9rem; color: #584A59; flex: 1;">
+          Hand-stretched ripened curd cheese handcrafted by Gujjar pastoralists in the high Jammu hills, crisped on heavy tawas into molten bliss.
+        </p>
+        <a href="/places/dogra-culinary-trail" style="font-size: 0.85rem; font-weight: 600; color: var(--mauve);">
+          Follow Food Trail →
+        </a>
+      </div>
+
+      <!-- Feature 3: Calico Printing -->
+      <div style="background: var(--white); padding: 2rem; border-radius: var(--radius-md); border: var(--border-subtle); box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
+        <div style="font-size: 2.2rem; margin-bottom: 1rem;">🧵</div>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Dogra Calico Weaves</h3>
+        <p style="font-size: 0.9rem; color: #584A59; flex: 1;">
+          Centuries of wooden block stamps carved with paisley and chinar leaves, dyed using organic pomegranate rinds and wild hill madder.
+        </p>
+        <a href="/places/dogra-calico-printing-crafts" style="font-size: 0.85rem; font-weight: 600; color: var(--mauve);">
+          Meet Artisan Guilds →
+        </a>
+      </div>
+
+      <!-- Feature 4: Chhota Kashi -->
+      <div style="background: var(--white); padding: 2rem; border-radius: var(--radius-md); border: var(--border-subtle); box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
+        <div style="font-size: 2.2rem; margin-bottom: 1rem;">🛕</div>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Purmandal & Devika</h3>
+        <p style="font-size: 0.9rem; color: #584A59; flex: 1;">
+          The mystical 'Chhota Kashi' where the sacred subterranean river flows beneath golden sands, celebrated in ancient Sanskrit texts.
+        </p>
+        <a href="/places/purmandal-chhota-kashi" style="font-size: 0.85rem; font-weight: 600; color: var(--mauve);">
+          Discover Purmandal →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive Map Preview Section -->
+<section class="section" style="background: var(--warm-ivory); border-top: var(--border-subtle);">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1.4fr; gap: 3rem; align-items: center;">
+      <div>
+        <span class="eyebrow">Geographic Coordinates</span>
+        <h2>Explore Jammu On The Map</h2>
+        <p style="color: #635564; margin-bottom: 1.5rem;">
+          Every landmark is plotted with verified satellite coordinates across the Tawi river valley, Chenab river gorge, and Shivalik foothill contours.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="color: var(--mauve); font-weight: bold;">✓</span>
+            <span style="font-size: 0.92rem;">Filter by forts, spiritual shrines, markets, or crafts.</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="color: var(--mauve); font-weight: bold;">✓</span>
+            <span style="font-size: 0.92rem;">Get exact real-time directions from your current location.</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="color: var(--mauve); font-weight: bold;">✓</span>
+            <span style="font-size: 0.92rem;">Switch seamlessly between map and list views.</span>
+          </div>
+        </div>
+        <a href="/map" class="btn btn-primary">
+          <span>Open Full Interactive Map</span>
+          <span>→</span>
+        </a>
+      </div>
+
+      <div style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); overflow: hidden; box-shadow: var(--shadow-md); height: 380px;" id="home-mini-map">
+        <!-- Leaflet map preview initialized by script below -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section style="background: linear-gradient(135deg, var(--mauve-dark), var(--plum-dark)); color: var(--white); padding: 5rem 0; text-align: center;">
+  <div class="container container-narrow">
+    <h2 style="color: var(--white); margin-bottom: 1rem;">Ready to Walk Through Forgotten Centuries?</h2>
+    <p style="color: var(--dusty-pink-light); margin-bottom: 2.25rem; font-size: 1.15rem;">
+      Generate a customized, day-by-day itinerary tailored to your pace, duration, and passions.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="/planner" class="btn btn-secondary" style="background: var(--dusty-pink-light); border: none;">
+        <span>Start Trip Planner</span>
+        <span>→</span>
+      </a>
+      <a href="/about" class="btn btn-outline" style="color: var(--white); border-color: rgba(255,255,255,0.4);">
+        Learn About Our Project
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Load Live Weather for Jammu city on homepage
+    loadLiveWeather('home-live-weather', 32.7266, 74.8570, 'Jammu City');
+
+    // 2. Initialize Mini Map Preview
+    const miniMapEl = document.getElementById('home-mini-map');
+    if (miniMapEl) {
+      const miniMap = L.map('home-mini-map', {
+        center: [32.7300, 74.8700],
+        zoom: 12,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 18
+      }).addTo(miniMap);
+
+      // Add a couple of sample markers
+      const sampleMarkers = [
+        { lat: 32.7308, lon: 74.8692, name: 'Mubarak Mandi Complex' },
+        { lat: 32.7297, lon: 74.8839, name: 'Bahu Fort & Kali Temple' },
+        { lat: 32.7485, lon: 74.8732, name: 'Amar Mahal Palace' }
+      ];
+
+      sampleMarkers.forEach(m => {
+        L.marker([m.lat, m.lon])
+          .addTo(miniMap)
+          .bindPopup(`<strong>${m.name}</strong><br><a href="/map">View on Map</a>`);
+      });
+    }
+  });
+</script>
+{% endblock %}

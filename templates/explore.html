@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Hidden Jammu — Discovery Directory | HIDDEN VIRASAT{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 3.5rem;">
+  <div class="container">
+    <!-- Header -->
+    <div style="margin-bottom: 2.5rem; max-width: 780px;">
+      <span class="eyebrow">The Cultural Directory</span>
+      <h1 style="font-size: 2.75rem; margin-bottom: 0.75rem;">Explore Jammu's Forgotten Sanctuaries</h1>
+      <p style="font-size: 1.05rem; color: #5B4E5C;">
+        From ancient sandstone bastions guarding the Chenab and Tawi rivers to artisanal block-print quarters and century-old spice alleys, explore Duggar's living legacy.
+      </p>
+    </div>
+
+    <!-- Controls & Filter Box -->
+    <div class="explore-controls-box">
+      <!-- Category Tabs -->
+      <div class="explore-filter-tabs">
+        <button class="filter-tab {% if not initial_category %}active{% endif %}" data-category="">
+          All Virasat (15)
+        </button>
+        {% for cat in categories %}
+        <button class="filter-tab {% if initial_category == cat %}active{% endif %}" data-category="{{ cat }}">
+          {{ cat }}
+        </button>
+        {% endfor %}
+      </div>
+
+      <!-- Search & Sort Row -->
+      <div class="explore-search-row">
+        <div class="explore-search-input-wrap">
+          <span class="explore-search-icon">🔍</span>
+          <input 
+            type="text" 
+            id="explore-search" 
+            class="explore-search-input" 
+            placeholder="Search by name, historic period, location, or cuisine..."
+            value="{{ initial_search }}"
+            aria-label="Search places"
+          >
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <label for="explore-sort" style="font-size: 0.85rem; font-weight: 600; color: #6F6170;">Sort By:</label>
+          <select id="explore-sort" class="explore-sort-select">
+            <option value="name">Alphabetical (A - Z)</option>
+            <option value="duration_asc">Visit Time (Shortest First)</option>
+            <option value="duration_desc">Visit Time (Longest First)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Status Count -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; font-size: 0.9rem; color: #6D5E6F;">
+      <span id="results-count" style="font-weight: 600;">Showing 15 cultural gems</span>
+      <span style="font-size: 0.8rem; color: var(--mauve);">⚡ All entries verified with satellite coordinates & historical references</span>
+    </div>
+
+    <!-- Dynamic Cards Grid -->
+    <div id="explore-cards-grid" class="cards-grid">
+      <!-- Populated dynamically by explore.js -->
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/explore.js') }}"></script>
+{% endblock %}

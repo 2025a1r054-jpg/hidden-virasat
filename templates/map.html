@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Heritage Map of Jammu — HIDDEN VIRASAT{% endblock %}
+
+{% block content %}
+<div class="map-page-layout">
+  <!-- Left Sidebar: Place Listing & Filters -->
+  <aside class="map-sidebar">
+    <div class="map-sidebar-header">
+      <span class="eyebrow">Interactive Cartography</span>
+      <h2 style="font-size: 1.45rem; margin-bottom: 0.25rem;">Jammu Heritage Map</h2>
+      <p style="font-size: 0.82rem; color: #695B6A; margin-bottom: 0.75rem;">
+        Click any pin or sidebar listing to inspect coordinates, historical context, and directions.
+      </p>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span id="map-places-count" style="font-size: 0.78rem; font-weight: 700; color: var(--mauve-dark);">
+          Loading landmarks...
+        </span>
+        <button id="map-fit-bounds-btn" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">
+          🎯 Fit All Markers
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable list of places -->
+    <div id="map-sidebar-places" class="map-sidebar-list">
+      <!-- Populated by map.js -->
+    </div>
+  </aside>
+
+  <!-- Right Main Area: Full Map with Floating Filter Pills -->
+  <main class="map-main-viewport">
+    <!-- Floating Filter Pills -->
+    <div class="map-floating-filters">
+      <button class="filter-tab map-filter-btn active" data-category="all">
+        All (15)
+      </button>
+      <button class="filter-tab map-filter-btn" data-category="Heritage & Forts">
+        🏰 Forts
+      </button>
+      <button class="filter-tab map-filter-btn" data-category="Temples & Spiritual Heritage">
+        🛕 Temples
+      </button>
+      <button class="filter-tab map-filter-btn" data-category="Museums & Art">
+        🎨 Museums
+      </button>
+      <button class="filter-tab map-filter-btn" data-category="Local Markets">
+        🛍️ Markets
+      </button>
+      <button class="filter-tab map-filter-btn" data-category="Traditional Crafts">
+        🧵 Crafts
+      </button>
+      <button class="filter-tab map-filter-btn" data-category="Nature & Cultural Experiences">
+        🌿 Culture & Nature
+      </button>
+    </div>
+
+    <!-- Leaflet Fullscreen Container -->
+    <div id="leaflet-full-map"></div>
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}

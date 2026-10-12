@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}HIDDEN VIRASAT — Discover the Soul of Jammu{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}Beyond the Famous. Into the Forgotten. Discover hidden heritage, local traditions, forgotten stories and the living culture of Jammu.{% endblock %}">
+
+  <!-- Favicon icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+
+  <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS for Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- Hidden Virasat Custom Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="/" class="nav-brand" aria-label="Hidden Virasat Home">
+        <div class="brand-crest">🏛️</div>
+        <div class="brand-text">
+          <span class="brand-title">HIDDEN VIRASAT</span>
+          <span class="brand-subtitle">Discover the Soul of Jammu</span>
+        </div>
+      </a>
+
+      <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+        ☰
+      </button>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
+          <li><a href="/explore" class="nav-link {% if request.path.startswith('/explore') or request.path.startswith('/places') %}active{% endif %}">Explore</a></li>
+          <li><a href="/map" class="nav-link {% if request.path == '/map' %}active{% endif %}">Interactive Map</a></li>
+          <li><a href="/planner" class="nav-link {% if request.path == '/planner' %}active{% endif %}">Trip Planner</a></li>
+          <li><a href="/stories" class="nav-link {% if request.path == '/stories' %}active{% endif %}">Local Stories</a></li>
+          <li><a href="/about" class="nav-link {% if request.path == '/about' %}active{% endif %}">About</a></li>
+        </ul>
+      </nav>
+
+      <a href="/planner" class="nav-cta-btn">Plan My Journey</a>
+    </div>
+  </header>
+
+  <!-- Main Content Block -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="nav-brand" style="margin-bottom: 1.25rem;">
+            <div class="brand-crest">🏛️</div>
+            <div class="brand-text">
+              <span class="brand-title" style="color: var(--white);">HIDDEN VIRASAT</span>
+              <span class="brand-subtitle" style="color: var(--dusty-pink);">The Soul of Jammu</span>
+            </div>
+          </div>
+          <p class="footer-brand-p">
+            <em>"Beyond the Famous. Into the Forgotten."</em> An academic digital initiative dedicated to cataloging and celebrating the Dogra heritage, ancient architecture, artisan traditions, and culinary secrets of Duggar Pradesh.
+          </p>
+          <div style="margin-top: 1.25rem;">
+            <span class="badge badge-pink" style="font-size: 0.72rem;">College AI Project MVP</span>
+          </div>
+        </div>
+
+        <div>
+          <h4>Discover</h4>
+          <ul class="footer-links">
+            <li><a href="/explore?category=Heritage+%26+Forts" class="footer-link">Heritage & Forts</a></li>
+            <li><a href="/explore?category=Temples+%26+Spiritual+Heritage" class="footer-link">Spiritual Sanctuaries</a></li>
+            <li><a href="/explore?category=Museums+%26+Art" class="footer-link">Museums & Miniature Art</a></li>
+            <li><a href="/explore?category=Local+Markets" class="footer-link">Historic Bazaars</a></li>
+            <li><a href="/explore?category=Traditional+Crafts" class="footer-link">Dogra Calico & Crafts</a></li>
+            <li><a href="/explore?category=Nature+%26+Cultural+Experiences" class="footer-link">Culinary Trails & Nature</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Journeys</h4>
+          <ul class="footer-links">
+            <li><a href="/planner" class="footer-link">Personalized Planner</a></li>
+            <li><a href="/map" class="footer-link">Interactive Map</a></li>
+            <li><a href="/stories" class="footer-link">Stories Carved in Time</a></li>
+            <li><a href="/about" class="footer-link">Methodology & Algorithm</a></li>
+            <li><a href="/about#limitations" class="footer-link">Project Scope & Notes</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Heritage Archives</h4>
+          <div class="footer-credits-box">
+            <p style="margin-bottom: 0.5rem; color: var(--dusty-pink); font-weight: 600;">Data Sources & Open Attributions:</p>
+            <p style="margin-bottom: 0.4rem;">• <strong>Monuments & History:</strong> Archaeological Survey of India (ASI) & Mubarak Mandi Heritage Society archives.</p>
+            <p style="margin-bottom: 0.4rem;">• <strong>Cartography:</strong> OpenStreetMap contributors via Leaflet.js engine.</p>
+            <p style="margin-bottom: 0.4rem;">• <strong>Meteorology:</strong> Open-Meteo High-Resolution Satellite API.</p>
+            <p style="margin-bottom: 0;">• <strong>Photography:</strong> Wikimedia Commons CC-BY-SA licensed archival records.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 <strong>HIDDEN VIRASAT</strong>. Developed as a College AI & Web Systems Project.
+        </div>
+        <div style="display: flex; gap: 1.5rem;">
+          <a href="/about" style="color: #A396A2;">Educational Project Notice</a>
+          <a href="/map" style="color: #A396A2;">Jammu Coordinates (32.7266° N, 74.8570° E)</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Core Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

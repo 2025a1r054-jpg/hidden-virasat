@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error_title }} | HIDDEN VIRASAT{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 6rem 0; text-align: center;">
+  <div class="container container-narrow">
+    <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏛️</div>
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">{{ error_title }}</h1>
+    <p style="font-size: 1.1rem; color: #6D5E6F; max-width: 520px; margin: 0 auto 2rem; line-height: 1.6;">
+      {{ error_message }}
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+      <a href="/" class="btn btn-primary">Return to Homepage</a>
+      <a href="/explore" class="btn btn-secondary">Explore Sanctuaries</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
