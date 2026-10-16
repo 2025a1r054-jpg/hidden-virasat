@@ -94,12 +94,98 @@ def init_db(seed=True):
     )
     """)
 
+    # Community Submissions table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS community_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        location TEXT NOT NULL,
+        address TEXT,
+        latitude REAL,
+        longitude REAL,
+        short_desc TEXT NOT NULL,
+        history TEXT,
+        cultural_significance TEXT,
+        things_to_see TEXT,
+        best_time TEXT,
+        submitter_name TEXT NOT NULL,
+        submitter_email TEXT,
+        image_url TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        admin_notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        reviewed_at TIMESTAMP
+    )
+    """)
+
+    # Reviews and Ratings table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        place_id INTEGER NOT NULL,
+        place_slug TEXT NOT NULL,
+        author_name TEXT NOT NULL,
+        rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        review_text TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'approved',
+        reported_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE
+    )
+    """)
+
+    # Safe migration: ensure is_community column in places
+    cursor.execute("PRAGMA table_info(places)")
+    existing_place_cols = [row[1] for row in cursor.fetchall()]
+    if "is_community" not in existing_place_cols:
+        cursor.execute("ALTER TABLE places ADD COLUMN is_community INTEGER NOT NULL DEFAULT 0")
+
+    # Story Submissions table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS story_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        category TEXT NOT NULL,
+        related_place TEXT,
+        contributor_name TEXT,
+        image_url TEXT,
+        edit_token TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        admin_notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        reviewed_at TIMESTAMP
+    )
+    """)
+
+    # Safe migration: ensure image_url and edit_token columns in story_submissions
+    cursor.execute("PRAGMA table_info(story_submissions)")
+    existing_sub_cols = [row[1] for row in cursor.fetchall()]
+    if "image_url" not in existing_sub_cols:
+        cursor.execute("ALTER TABLE story_submissions ADD COLUMN image_url TEXT")
+    if "edit_token" not in existing_sub_cols:
+        cursor.execute("ALTER TABLE story_submissions ADD COLUMN edit_token TEXT")
+
+    # Safe migration: ensure is_community, contributor_name, submission_id, status columns in stories
+    cursor.execute("PRAGMA table_info(stories)")
+    existing_story_cols = [row[1] for row in cursor.fetchall()]
+    if "is_community" not in existing_story_cols:
+        cursor.execute("ALTER TABLE stories ADD COLUMN is_community INTEGER NOT NULL DEFAULT 0")
+    if "contributor_name" not in existing_story_cols:
+        cursor.execute("ALTER TABLE stories ADD COLUMN contributor_name TEXT")
+    if "submission_id" not in existing_story_cols:
+        cursor.execute("ALTER TABLE stories ADD COLUMN submission_id INTEGER")
+    if "status" not in existing_story_cols:
+        cursor.execute("ALTER TABLE stories ADD COLUMN status TEXT NOT NULL DEFAULT 'approved'")
+
     conn.commit()
 
     if seed:
-        from database.seed_data import seed_places, seed_stories
+        from database.seed_data import seed_places, seed_stories, seed_reviews
         seed_places(conn)
         seed_stories(conn)
+        seed_reviews(conn)
 
     conn.close()
 

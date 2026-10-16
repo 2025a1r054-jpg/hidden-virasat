@@ -1424,3 +1424,33 @@ p {
   .stat-item { border-right: none; border-bottom: 1px solid var(--soft-grey); padding-bottom: 1rem; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* --------------------------------------------------------------------------
+   Community Submissions & Reviews Component Styles
+   -------------------------------------------------------------------------- */
+.review-card {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.review-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-report-review:hover {
+  color: #C0392B !important;
+}
+
+#star-picker span {
+  transition: transform 0.15s ease, color 0.15s ease;
+  display: inline-block;
+}
+
+#star-picker span:hover {
+  transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+  #suggest-picker-map {
+    height: 180px;
+  }
+}

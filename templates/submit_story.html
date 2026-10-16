@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Add Your Story — Dogra Oral Chronicle | HIDDEN VIRASAT{% endblock %}
+
+{% block meta_desc %}Contribute a local legend, oral history, folklore tale, or community tradition from Duggar Pradesh to the living literary archives of Hidden Virasat.{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="padding-top: 3.5rem; padding-bottom: 5rem;">
+
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <span class="eyebrow">Dogra Literary Chronicle</span>
+    <h1 style="font-size: 2.6rem; margin-bottom: 0.85rem;">Add Your Local Story</h1>
+    <p style="font-size: 1.05rem; color: #5B4E5C; max-width: 650px; margin: 0 auto; line-height: 1.6;">
+      Every hill pass, sacred grove, stepwell, and ancestral courtyard in Jammu holds a living tale. Share your oral histories, folklore, or traditional chronicles with our living archives.
+    </p>
+  </div>
+
+  <!-- Success Notification -->
+  {% if success %}
+  <div style="background: #EAF7EE; border: 1px solid #B8E4C4; border-radius: var(--radius-md); padding: 2rem; margin-bottom: 2.5rem; text-align: center; box-shadow: var(--shadow-sm);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📜✨</div>
+    <h3 style="color: #205A2E; margin-bottom: 0.5rem; font-size: 1.6rem;">Your Chronicle Has Been Recorded!</h3>
+    <p style="color: #2F6E3F; max-width: 580px; margin: 0 auto 1.25rem; line-height: 1.6;">
+      Thank you for submitting <strong>"{{ submitted_title }}"</strong>. Your narrative has been saved with a <em>Pending</em> status. Our editorial team will review the text for authentic regional heritage before publishing it to the public Stories Journal.
+    </p>
+
+    <!-- Contributor Revision Credentials Card -->
+    {% if submission_id and edit_token %}
+    <div style="background: var(--white); border: 1px solid rgba(214, 163, 176, 0.45); border-radius: var(--radius-sm); padding: 1.25rem; margin: 1.5rem auto; max-width: 620px; text-align: left; box-shadow: var(--shadow-xs);">
+      <h4 style="font-size: 0.98rem; color: var(--deep-plum); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+        <span>🔐</span> Private Story Revision Link
+      </h4>
+      <p style="font-size: 0.82rem; color: #675868; margin-bottom: 0.65rem; line-height: 1.5;">
+        Bookmark or save this private link. You can return to edit your narrative, update information, or add/replace photos at any time without submitting a duplicate story:
+      </p>
+      <div style="background: var(--warm-ivory); border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; font-family: monospace; font-size: 0.82rem; color: var(--mauve-dark); word-break: break-all; margin-bottom: 0.75rem;">
+        /stories/{{ submission_id }}/edit?key={{ edit_token }}
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <span style="font-size: 0.78rem; color: #7A6B7B;">Story Ref: <strong>#{{ submission_id }}</strong> • Access Key: <code>{{ edit_token }}</code></span>
+        <a href="/stories/{{ submission_id }}/edit?key={{ edit_token }}" class="btn btn-secondary btn-sm" style="font-size: 0.82rem;">
+          ✏️ Edit or Add Photo
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+      <a href="/stories" class="btn btn-primary btn-sm">Explore Local Stories</a>
+      <a href="/stories/submit" class="btn btn-secondary btn-sm">Submit Another Tale</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Validation Errors -->
+  {% if errors %}
+  <div style="background: #FDF2F4; border: 1px solid #F5C6CB; border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+    <h4 style="color: #721C24; margin-bottom: 0.75rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>⚠️</span> Please rectify the following items:
+    </h4>
+    <ul style="color: #721C24; padding-left: 1.5rem; line-height: 1.6; font-size: 0.92rem;">
+      {% for err in errors %}
+      <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if not success %}
+  <!-- Story Submission Form -->
+  <div class="planner-form-card" style="box-shadow: var(--shadow-md);">
+    <form action="/stories/submit" method="POST" enctype="multipart/form-data" id="story-submission-form">
+
+      <!-- Anti-Spam Honeypot Field -->
+      <div style="display: none;" aria-hidden="true">
+        <label for="website_url">Leave blank</label>
+        <input type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- Story Title -->
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label class="form-label" for="title">
+          Story Title <span style="color: #C0392B;">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="title" 
+          name="title" 
+          required 
+          minlength="5" 
+          maxlength="120" 
+          placeholder="e.g. The Whispering Stepwells of Krimchi, The Legend of Data Ranpat"
+          value="{{ form_data.title if form_data else '' }}"
+          style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; transition: border 0.2s;"
+        >
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.75rem;">
+        <!-- Category -->
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="category">
+            Category <span style="color: #C0392B;">*</span>
+          </label>
+          <select 
+            id="category" 
+            name="category" 
+            required
+            style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; cursor: pointer;"
+          >
+            <option value="" disabled {% if not form_data or not form_data.category %}selected{% endif %}>Select story category...</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if form_data and form_data.category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Optional Related Place -->
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="related_place">
+            Related Heritage Place (Optional)
+          </label>
+          <select 
+            id="related_place" 
+            name="related_place"
+            style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; cursor: pointer;"
+          >
+            <option value="">General Duggar / Jammu Region</option>
+            {% for p in places %}
+            <option value="{{ p.name }}" {% if form_data and form_data.related_place == p.name %}selected{% endif %}>
+              {{ p.name }} ({{ p.location }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Contributor Display Name -->
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label class="form-label" for="contributor_name">
+          Contributor Display Name (Optional)
+        </label>
+        <input 
+          type="text" 
+          id="contributor_name" 
+          name="contributor_name" 
+          maxlength="60" 
+          placeholder="e.g. Shivani Jamwal, Elder of Akhnoor, or Dogra Chronicler"
+          value="{{ form_data.contributor_name if form_data else '' }}"
+          style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none;"
+        >
+        <div style="font-size: 0.78rem; color: #7B6B7C; margin-top: 0.4rem;">
+          How you wish your byline to appear alongside this narrative. Leave empty to display as <em>Community Chronicler</em>.
+        </div>
+      </div>
+
+      <!-- Optional Story Photograph Upload -->
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label class="form-label" for="image_file">
+          Optional Story Photograph (.jpg, .jpeg, .png, .webp)
+        </label>
+        <input 
+          type="file" 
+          id="image_file" 
+          name="image_file" 
+          accept=".jpg,.jpeg,.png,.webp"
+          style="width: 100%; padding: 0.65rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.88rem; background: var(--warm-ivory);"
+        >
+        <div style="font-size: 0.78rem; color: #7B6B7C; margin-top: 0.4rem;">
+          Upload a regional photograph, ancient monument photo, or cultural craft setting (max 5 MB). Photo upload is optional—you can also add or update a photo later!
+        </div>
+      </div>
+
+      <!-- Story Text Content -->
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label class="form-label" for="content">
+          Story Narrative <span style="color: #C0392B;">*</span>
+        </label>
+        <textarea 
+          id="content" 
+          name="content" 
+          required 
+          minlength="30" 
+          maxlength="5000" 
+          rows="10" 
+          placeholder="Narrate the story in full. Include cultural details, historical memories, oral sayings, characters, or geographical landmarks that bring the tale to life (30 to 5,000 characters)..."
+          style="width: 100%; padding: 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); line-height: 1.65; resize: vertical;"
+        >{{ form_data.content if form_data else '' }}</textarea>
+      </div>
+
+      <!-- Editorial Notice -->
+      <div style="background: var(--soft-grey-light); border-radius: var(--radius-sm); padding: 1rem 1.25rem; font-size: 0.84rem; color: #584959; line-height: 1.55; margin-bottom: 2rem;">
+        🛡️ <strong>Curatorial Standards Notice:</strong> To maintain academic and cultural authenticity, all story submissions are reviewed by the Hidden Virasat curation desk. Once vetted, approved stories are published to the living Stories Journal.
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+        <a href="/stories" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" style="padding: 0.85rem 2.2rem; font-size: 1rem;">
+          📜 Submit Story for Archival Review
+        </button>
+      </div>
+
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

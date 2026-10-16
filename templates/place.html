@@ -28,14 +28,22 @@
     >
     <div class="place-detail-hero-gradient">
       <div>
-        <span class="badge badge-mauve" style="margin-bottom: 0.75rem; background: rgba(255,255,255,0.25); color: #FFF; border: none;">
-          {{ place.category }}
-        </span>
+        <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span class="badge badge-mauve" style="background: rgba(255,255,255,0.25); color: #FFF; border: none;">
+            {{ place.category }}
+          </span>
+          {% if place.is_community %}
+          <span class="badge badge-pink" style="background: rgba(214, 163, 176, 0.4); border: 1px solid rgba(255,255,255,0.4); color: #FFF;">
+            🤝 Community Suggested
+          </span>
+          {% endif %}
+        </div>
         <h1 class="place-detail-title">{{ place.name }}</h1>
         <div class="place-meta-bar">
           <span>📍 {{ place.location }}</span>
           <span>⏱️ Approx. Duration: <strong>{{ place.visit_duration_label }}</strong></span>
           <span>🗓️ Best Time: <strong>{{ place.best_time }}</strong></span>
+          <span>⭐ {% if avg_rating %}<strong>{{ avg_rating }}/5</strong> ({{ review_count }} reflections){% else %}<em>Awaiting reflections</em>{% endif %}</span>
         </div>
       </div>
     </div>
@@ -110,6 +118,180 @@
         <p style="line-height: 1.65; color: #4E404F;">
           {{ place.tips_accessibility }}
         </p>
+      </section>
+
+      <!-- Community Reflections & Ratings Section -->
+      <section class="editorial-block" id="reflections" style="padding-top: 2rem; border-top: 2px solid var(--soft-grey);">
+        <span class="eyebrow">Visitor Experiences</span>
+        <h3 style="margin-bottom: 0.5rem;">Community Reflections & Ratings</h3>
+        
+        <!-- Transparency Disclosure Notice -->
+        <div style="background: var(--soft-grey-light); border-left: 3px solid var(--mauve); border-radius: var(--radius-sm); padding: 0.85rem 1.15rem; margin-bottom: 1.75rem; font-size: 0.84rem; color: #584A59; line-height: 1.5;">
+          <strong>ℹ️ Archival Transparency:</strong> Community reviews are submitted by fellow cultural travelers and heritage enthusiasts. In accordance with archival ethics, these represent personal experiences and are community contributions rather than independently verified or officially certified audits.
+        </div>
+
+        <!-- Flash messages specific to review submission -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+            <div style="padding: 0.85rem 1.15rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; 
+              {% if category == 'success' %}background: #EAF7EE; color: #205A2E; border: 1px solid #B8E4C4;
+              {% elif category == 'error' %}background: #FDF2F4; color: #721C24; border: 1px solid #F5C6CB;
+              {% else %}background: #F4EEF3; color: var(--mauve-dark); border: 1px solid #D6A3B0;{% endif %}">
+              {{ message }}
+            </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Overall Score Summary Card -->
+        <div style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; box-shadow: var(--shadow-xs);">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            {% if avg_rating %}
+            <div style="font-size: 3rem; font-weight: 700; color: var(--deep-plum); font-family: var(--font-serif); line-height: 1;">
+              {{ avg_rating }}
+            </div>
+            <div>
+              <div style="color: #D48806; font-size: 1.25rem; letter-spacing: 2px; margin-bottom: 2px;">
+                {% for i in range(1, 6) %}
+                  {% if i <= avg_rating|round|int %}★{% else %}☆{% endif %}
+                {% endfor %}
+              </div>
+              <div style="font-size: 0.82rem; color: #736474;">
+                Based on <strong>{{ review_count }}</strong> community reflection{% if review_count != 1 %}s{% endif %}
+              </div>
+            </div>
+            {% else %}
+            <div>
+              <div style="font-size: 1.15rem; font-weight: 600; color: var(--deep-plum); margin-bottom: 0.25rem;">
+                No Reflections Yet
+              </div>
+              <div style="font-size: 0.82rem; color: #736474;">
+                Be the first to record your cultural thoughts on {{ place.name }}.
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <a href="#reflection-form" class="btn btn-secondary btn-sm" style="font-size: 0.85rem;">
+            ✍️ Leave a Reflection
+          </a>
+        </div>
+
+        <!-- Reviews List -->
+        <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem;">
+          {% if reviews %}
+            {% for rev in reviews %}
+            <div class="review-card" id="review-{{ rev.id }}" style="background: var(--white); border-radius: var(--radius-sm); border: var(--border-subtle); padding: 1.25rem 1.5rem; box-shadow: var(--shadow-xs);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--mauve-light); color: var(--mauve-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">
+                    {{ rev.author_name[0]|upper }}
+                  </div>
+                  <div>
+                    <strong style="font-size: 0.95rem; color: var(--deep-plum);">{{ rev.author_name }}</strong>
+                    <span style="font-size: 0.75rem; color: #8F8190; margin-left: 0.4rem;">• {{ rev.created_at[:10] }}</span>
+                  </div>
+                </div>
+                <div style="color: #D48806; font-size: 1rem; letter-spacing: 2px;">
+                  {% for i in range(1, 6) %}
+                    {% if i <= rev.rating %}★{% else %}☆{% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              <p style="font-size: 0.92rem; color: #443745; line-height: 1.6; margin-bottom: 0.65rem;">
+                {{ rev.review_text }}
+              </p>
+              <div style="display: flex; justify-content: flex-end; align-items: center;">
+                <button 
+                  type="button" 
+                  class="btn-report-review" 
+                  data-review-id="{{ rev.id }}"
+                  style="background: none; border: none; font-size: 0.74rem; color: #A092A1; cursor: pointer; text-decoration: underline; padding: 0;"
+                >
+                  🏳️ Report Inappropriate
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div style="text-align: center; padding: 2rem; background: var(--warm-ivory); border-radius: var(--radius-sm); border: 1px dashed var(--soft-grey);">
+              <p style="font-size: 0.92rem; color: #7B6B7C; margin-bottom: 0.5rem;">
+                No visitor reflections have been recorded for {{ place.name }} yet.
+              </p>
+              <span style="font-size: 0.8rem; color: var(--mauve); font-weight: 600;">Share your impressions below to help fellow travelers!</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Submission Form Card -->
+        <div id="reflection-form" style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); padding: 2rem; box-shadow: var(--shadow-sm);">
+          <h4 style="font-size: 1.35rem; margin-bottom: 0.25rem; color: var(--deep-plum);">Leave Your Reflection</h4>
+          <p style="font-size: 0.86rem; color: #6E5E6F; margin-bottom: 1.5rem;">
+            Share your experience, historical impressions, atmosphere, or advice for future visitors.
+          </p>
+
+          <form action="/places/{{ place.slug }}/review" method="POST" id="review-submission-form">
+            <!-- Anti-Spam Honeypot Field -->
+            <div style="display: none;" aria-hidden="true">
+              <label for="review_website_url">Leave blank</label>
+              <input type="text" name="website_url" id="review_website_url" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- Star Rating Input -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+              <label class="form-label" style="margin-bottom: 0.4rem;">
+                Your Rating <span style="color: #C0392B;">*</span>
+              </label>
+              <input type="hidden" name="rating" id="selected-rating-val" value="5">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <div id="star-picker" style="font-size: 1.75rem; color: #D48806; cursor: pointer; user-select: none;">
+                  <span data-star="1">★</span><span data-star="2">★</span><span data-star="3">★</span><span data-star="4">★</span><span data-star="5">★</span>
+                </div>
+                <span id="star-rating-label" style="font-size: 0.86rem; color: #726273; font-weight: 600; margin-left: 0.5rem;">
+                  5 - Exceptional
+                </span>
+              </div>
+            </div>
+
+            <!-- Submitter Name -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+              <label class="form-label" for="author_name" style="margin-bottom: 0.4rem;">
+                Your Name
+              </label>
+              <input 
+                type="text" 
+                id="author_name" 
+                name="author_name" 
+                maxlength="60" 
+                placeholder="e.g. Meenakshi Jamwal or Cultural Explorer"
+                style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.92rem; background: var(--warm-ivory);"
+              >
+            </div>
+
+            <!-- Written Reflection -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label class="form-label" for="review_text" style="margin-bottom: 0.4rem;">
+                Written Reflection <span style="color: #C0392B;">*</span>
+              </label>
+              <textarea 
+                id="review_text" 
+                name="review_text" 
+                required 
+                minlength="10" 
+                maxlength="1000" 
+                rows="4" 
+                placeholder="What was your experience visiting this heritage spot? Any advice on timings, architectural details, or photography? (10 to 1,000 characters)..."
+                style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.92rem; background: var(--warm-ivory); resize: vertical;"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.8rem; font-size: 0.92rem;">
+              ✨ Publish Reflection
+            </button>
+          </form>
+        </div>
+
       </section>
     </div>
 
@@ -214,6 +396,80 @@
         .bindPopup(`<strong>${placeName}</strong><br><span style="font-size:0.75rem;">${lat}, ${lon}</span>`)
         .openPopup();
     }
+
+    // 3. Interactive Star Rating Selector
+    const starPicker = document.getElementById('star-picker');
+    const ratingInput = document.getElementById('selected-rating-val');
+    const ratingLabel = document.getElementById('star-rating-label');
+    const ratingDescriptions = {
+      1: '1 - Disappointing',
+      2: '2 - Fair',
+      3: '3 - Pleasant',
+      4: '4 - Very Good',
+      5: '5 - Exceptional'
+    };
+
+    if (starPicker && ratingInput) {
+      const stars = starPicker.querySelectorAll('span');
+      function updateStars(val) {
+        ratingInput.value = val;
+        if (ratingLabel) ratingLabel.textContent = ratingDescriptions[val] || `${val} Stars`;
+        stars.forEach((s) => {
+          const sVal = parseInt(s.dataset.star, 10);
+          s.textContent = sVal <= val ? '★' : '☆';
+          s.style.color = sVal <= val ? '#D48806' : '#C7BCC8';
+        });
+      }
+
+      stars.forEach((s) => {
+        s.addEventListener('click', () => {
+          const val = parseInt(s.dataset.star, 10);
+          updateStars(val);
+        });
+        s.addEventListener('mouseenter', () => {
+          const val = parseInt(s.dataset.star, 10);
+          stars.forEach((st) => {
+            const stVal = parseInt(st.dataset.star, 10);
+            st.textContent = stVal <= val ? '★' : '☆';
+            st.style.color = stVal <= val ? '#D48806' : '#C7BCC8';
+          });
+        });
+      });
+
+      starPicker.addEventListener('mouseleave', () => {
+        updateStars(parseInt(ratingInput.value, 10));
+      });
+    }
+
+    // 4. Report Review Button Async Handler
+    document.querySelectorAll('.btn-report-review').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const reviewId = btn.dataset.reviewId;
+        if (!confirm('Report this reflection to the curation desk for moderation?')) return;
+
+        btn.disabled = true;
+        btn.textContent = 'Reporting...';
+
+        try {
+          const res = await fetch(`/api/reviews/${reviewId}/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            btn.textContent = '✓ Flagged for Editorial Review';
+            btn.style.color = '#C0392B';
+            btn.style.textDecoration = 'none';
+            btn.style.cursor = 'default';
+          } else {
+            btn.textContent = 'Unable to report';
+          }
+        } catch (err) {
+          btn.textContent = 'Error reporting';
+        }
+      });
+    });
   });
 </script>
 {% endblock %}

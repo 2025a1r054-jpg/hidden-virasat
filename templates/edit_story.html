@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Story — {{ story.title if story else 'Private Story Revision' }} | HIDDEN VIRASAT{% endblock %}
+
+{% block meta_desc %}Revise your contributed Dogra folklore, oral chronicle, or community tradition on Hidden Virasat.{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="padding-top: 3.5rem; padding-bottom: 5rem;">
+
+  <!-- AUTHORIZATION CHALLENGE SCREEN (When key is missing or invalid) -->
+  {% if not authorized %}
+  <div style="max-width: 480px; margin: 3rem auto; background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); padding: 2.5rem 2rem; box-shadow: var(--shadow-md); text-align: center;">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔐</div>
+    <span class="eyebrow" style="margin-bottom: 0.25rem;">Contributor Verification</span>
+    <h2 style="font-size: 1.85rem; margin-bottom: 0.5rem; color: var(--deep-plum);">Story Edit Access</h2>
+    <p style="font-size: 0.88rem; color: #726273; margin-bottom: 1.75rem; line-height: 1.5;">
+      To protect contributor ownership, please enter the private edit passkey provided when this story was submitted.
+    </p>
+
+    {% if error %}
+    <div style="background: #FDF2F4; border: 1px solid #F5C6CB; border-radius: var(--radius-sm); padding: 0.85rem 1rem; color: #721C24; font-size: 0.86rem; margin-bottom: 1.5rem; text-align: left;">
+      ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="GET" action="/stories/{{ story_id }}/edit">
+      <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
+        <label class="form-label" for="key" style="font-size: 0.88rem;">Private Edit Key</label>
+        <input 
+          type="text" 
+          id="key" 
+          name="key" 
+          required 
+          placeholder="Enter 24-character edit key..." 
+          autofocus
+          style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: monospace; background: var(--warm-ivory); outline: none;"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; margin-bottom: 1.25rem;">
+        Unlock Story Revision Form
+      </button>
+
+      <div style="font-size: 0.8rem; color: #8F8190;">
+        <a href="/stories" style="color: var(--mauve);">← Return to Stories Journal</a>
+      </div>
+    </form>
+  </div>
+
+  {% else %}
+  <!-- AUTHORIZED REVISION FORM -->
+
+  <!-- Breadcrumbs & Header -->
+  <div style="margin-bottom: 2rem;">
+    <div style="font-size: 0.85rem; color: #736474; margin-bottom: 0.5rem;">
+      <a href="/stories" style="color: var(--mauve);">Stories Journal</a> &gt; <span>Revise Chronicle #{{ story.id }}</span>
+    </div>
+    <span class="eyebrow">Story Revision Portal</span>
+    <h1 style="font-size: 2.4rem; margin-bottom: 0.5rem;">Revise Your Story</h1>
+    <p style="font-size: 0.95rem; color: #625363; margin: 0;">
+      Update your narrative, correct historical details, change category, or upload photography.
+    </p>
+  </div>
+
+  <!-- Success Notification -->
+  {% if success %}
+  <div style="background: #EAF7EE; border: 1px solid #B8E4C4; border-radius: var(--radius-md); padding: 1.75rem; margin-bottom: 2.5rem; text-align: center; box-shadow: var(--shadow-sm);">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem;">✨📜</div>
+    <h3 style="color: #205A2E; margin-bottom: 0.35rem; font-size: 1.45rem;">Changes Successfully Saved!</h3>
+    <p style="color: #2F6E3F; max-width: 580px; margin: 0 auto 1.25rem; font-size: 0.92rem; line-height: 1.55;">
+      Your revisions for <strong>"{{ updated_title }}"</strong> have been recorded and sent to the curation desk with <em>Pending Review</em> status. Once re-approved, your updated story and photography will appear live.
+    </p>
+    <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+      <a href="/stories" class="btn btn-primary btn-sm">Return to Stories</a>
+      <a href="/stories/{{ story.id }}/edit?key={{ key }}" class="btn btn-secondary btn-sm">Continue Editing</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Validation Errors -->
+  {% if errors %}
+  <div style="background: #FDF2F4; border: 1px solid #F5C6CB; border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+    <h4 style="color: #721C24; margin-bottom: 0.75rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>⚠️</span> Please rectify the following items:
+    </h4>
+    <ul style="color: #721C24; padding-left: 1.5rem; line-height: 1.6; font-size: 0.92rem;">
+      {% for err in errors %}
+      <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- Status Warning Notice -->
+  {% if story.status == 'approved' and not success %}
+  <div style="background: #FFF8E1; border: 1px solid #FFE082; border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 2rem; color: #8D6E1C; font-size: 0.88rem; line-height: 1.5;">
+    ⚠️ <strong>Pending Review Notice:</strong> This story is currently approved and live. Saving edits will send the updated version back to the curation desk for <em>Pending Review</em> before changes appear publicly.
+  </div>
+  {% elif story.status == 'pending' and not success %}
+  <div style="background: #E8F4FD; border: 1px solid #BEE3F8; border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 2rem; color: #2B6CB0; font-size: 0.88rem; line-height: 1.5;">
+    ℹ️ <strong>Pending Review:</strong> This story is currently in the curation queue. Any revisions you save will be reviewed together with the narrative.
+  </div>
+  {% endif %}
+
+  <!-- Edit Form Card -->
+  <div class="planner-form-card" style="box-shadow: var(--shadow-md);">
+    <form action="/stories/{{ story.id }}/edit?key={{ key }}" method="POST" enctype="multipart/form-data" id="story-edit-form">
+
+      <!-- Hidden verification key and honeypot -->
+      <input type="hidden" name="edit_key" value="{{ key }}">
+      <div style="display: none;" aria-hidden="true">
+        <label for="website_url">Leave blank</label>
+        <input type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- Story Title -->
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label class="form-label" for="title">
+          Story Title <span style="color: #C0392B;">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="title" 
+          name="title" 
+          required 
+          minlength="5" 
+          maxlength="120" 
+          value="{{ form_data.title if form_data else story.title }}"
+          style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none;"
+        >
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.75rem;">
+        <!-- Category -->
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="category">
+            Category <span style="color: #C0392B;">*</span>
+          </label>
+          <select 
+            id="category" 
+            name="category" 
+            required
+            style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; cursor: pointer;"
+          >
+            {% set cur_cat = form_data.category if form_data else story.category %}
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if cur_cat == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Optional Related Place -->
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="related_place">
+            Related Heritage Place (Optional)
+          </label>
+          <select 
+            id="related_place" 
+            name="related_place"
+            style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; cursor: pointer;"
+          >
+            {% set cur_place = form_data.related_place if form_data else story.related_place %}
+            <option value="" {% if not cur_place %}selected{% endif %}>General Duggar / Jammu Region</option>
+            {% for p in places %}
+            <option value="{{ p.name }}" {% if cur_place == p.name %}selected{% endif %}>
+              {{ p.name }} ({{ p.location }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Contributor Display Name -->
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label class="form-label" for="contributor_name">
+          Contributor Display Name (Optional)
+        </label>
+        <input 
+          type="text" 
+          id="contributor_name" 
+          name="contributor_name" 
+          maxlength="60" 
+          value="{{ form_data.contributor_name if form_data else (story.contributor_name or '') }}"
+          placeholder="e.g. Shivani Jamwal, Elder of Akhnoor, or Dogra Chronicler"
+          style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none;"
+        >
+      </div>
+
+      <!-- Photo Upload & Current Image Preview -->
+      <div class="form-group" style="margin-bottom: 1.75rem; background: var(--soft-grey-light); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--soft-grey);">
+        <label class="form-label" style="margin-bottom: 0.5rem;">
+          Story Photography (.jpg, .jpeg, .png, .webp)
+        </label>
+
+        {% if story.image_url and story.image_url != '/static/images/fallback-heritage.svg' %}
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; background: var(--white); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--soft-grey);">
+          <img 
+            src="{{ story.image_url }}" 
+            alt="Current story photo" 
+            style="width: 120px; height: 80px; object-fit: cover; border-radius: var(--radius-sm);"
+            onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+          >
+          <div>
+            <div style="font-size: 0.84rem; font-weight: 600; color: var(--deep-plum);">Current Photo Attached</div>
+            <div style="font-size: 0.76rem; color: #7B6B7C; word-break: break-all;">{{ story.image_url }}</div>
+            <div style="font-size: 0.76rem; color: #4F6D44; margin-top: 2px;">Upload a new image below to replace it, or leave blank to keep this photo.</div>
+          </div>
+        </div>
+        {% else %}
+        <div style="font-size: 0.82rem; color: #756775; margin-bottom: 0.75rem;">
+          <em>No custom photo is currently attached to this story. You can upload one now!</em>
+        </div>
+        {% endif %}
+
+        <input 
+          type="file" 
+          id="image_file" 
+          name="image_file" 
+          accept=".jpg,.jpeg,.png,.webp"
+          style="width: 100%; padding: 0.6rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.88rem; background: var(--white);"
+        >
+        <div style="font-size: 0.76rem; color: #7B6B7C; margin-top: 0.35rem;">
+          Max file size: 5 MB. Formats supported: JPEG, PNG, WebP. Photo upload is completely optional.
+        </div>
+      </div>
+
+      <!-- Story Narrative -->
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label class="form-label" for="content">
+          Story Narrative <span style="color: #C0392B;">*</span>
+        </label>
+        <textarea 
+          id="content" 
+          name="content" 
+          required 
+          minlength="30" 
+          maxlength="5000" 
+          rows="10" 
+          style="width: 100%; padding: 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); line-height: 1.65; resize: vertical;"
+        >{{ form_data.content if form_data else story.content }}</textarea>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+        <a href="/stories" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" style="padding: 0.85rem 2.2rem; font-size: 1rem;">
+          💾 Save Changes &amp; Queue for Review
+        </button>
+      </div>
+
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Curation Story Submissions Desk — Hidden Virasat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+
+  <!-- Breadcrumbs & Actions -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="font-size: 0.85rem; color: #736474; margin-bottom: 0.25rem;">
+        <a href="/admin" style="color: var(--mauve);">Admin Dashboard</a> &gt; <span>Story Submissions</span>
+      </div>
+      <h1 style="font-size: 2.2rem; margin: 0;">Community Story Submissions</h1>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/admin" class="btn btn-secondary btn-sm">← Back to Overview</a>
+      <a href="/stories/submit" target="_blank" class="btn btn-secondary btn-sm">+ Test Story Form ↗</a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div style="padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.92rem; 
+        {% if category == 'success' %}background: #EAF7EE; color: #205A2E; border: 1px solid #B8E4C4;
+        {% elif category == 'error' %}background: #FDF2F4; color: #721C24; border: 1px solid #F5C6CB;
+        {% else %}background: #F4EEF3; color: var(--mauve-dark); border: 1px solid #D6A3B0;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Filter Tabs -->
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--soft-grey); padding-bottom: 0.5rem;">
+    <a href="/admin/stories?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      Pending Review
+    </a>
+    <a href="/admin/stories?status=approved" class="btn btn-sm {% if status_filter == 'approved' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      Approved & Published
+    </a>
+    <a href="/admin/stories?status=rejected" class="btn btn-sm {% if status_filter == 'rejected' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      Rejected
+    </a>
+    <a href="/admin/stories?status=all" class="btn btn-sm {% if status_filter == 'all' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      All Records
+    </a>
+  </div>
+
+  <!-- Stories Submissions List -->
+  {% if stories %}
+  <div style="display: flex; flex-direction: column; gap: 2rem;">
+    {% for st in stories %}
+    <div style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); box-shadow: var(--shadow-sm); overflow: hidden;">
+      
+      <!-- Card Header -->
+      <div style="background: var(--warm-ivory); padding: 1.25rem 1.75rem; border-bottom: var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <span class="badge badge-mauve" style="font-size: 0.72rem; margin-bottom: 0.35rem;">{{ st.category }}</span>
+          <h2 style="font-size: 1.5rem; margin: 0; color: var(--deep-plum);">{{ st.title }}</h2>
+          <div style="font-size: 0.82rem; color: #6E5F6F; margin-top: 3px;">
+            By <strong>{{ st.contributor_name or 'Community Chronicler' }}</strong>
+            {% if st.related_place %} • Related to: <em>{{ st.related_place }}</em>{% endif %}
+            • Submitted on {{ st.created_at }}
+          </div>
+        </div>
+
+        <div>
+          {% if st.status == 'pending' %}
+          <span style="background: #FFF3CD; color: #856404; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-weight: 700;">
+            ⏳ Awaiting Curation
+          </span>
+          {% elif st.status == 'approved' %}
+          <span style="background: #D4EDDA; color: #155724; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-weight: 700;">
+            ✓ Published to Stories Journal
+          </span>
+          {% else %}
+          <span style="background: #F8D7DA; color: #721C24; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-weight: 700;">
+            ✕ Rejected
+          </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Card Body: Story Narrative & Photo -->
+      <div style="padding: 1.75rem;">
+        {% if st.image_url and st.image_url != '/static/images/fallback-heritage.svg' %}
+        <div style="display: flex; gap: 1.25rem; align-items: flex-start; margin-bottom: 1.25rem; background: var(--white); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--soft-grey);">
+          <img 
+            src="{{ st.image_url }}" 
+            alt="{{ st.title }}" 
+            style="width: 140px; height: 95px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--soft-grey);"
+            onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+          >
+          <div>
+            <div style="font-size: 0.84rem; font-weight: 700; color: var(--mauve-dark);">Attached Story Photo</div>
+            <div style="font-size: 0.76rem; color: #7B6B7C; word-break: break-all;">{{ st.image_url }}</div>
+            <div style="font-size: 0.76rem; color: #433644; margin-top: 4px;">Photo will be displayed in the living Stories Journal when approved.</div>
+          </div>
+        </div>
+        {% endif %}
+
+        <div style="background: var(--warm-ivory); border-radius: var(--radius-sm); padding: 1.25rem 1.5rem; font-size: 0.95rem; color: #3E323F; line-height: 1.7; white-space: pre-line; border-left: 3px solid var(--mauve);">
+          {{ st.content }}
+        </div>
+
+        {% if st.admin_notes %}
+        <div style="margin-top: 1rem; background: #FDF2F4; border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.84rem; color: #721C24;">
+          <strong>Editorial Note:</strong> {{ st.admin_notes }}
+        </div>
+        {% endif %}
+
+        {% if st.edit_token %}
+        <div style="margin-top: 0.75rem; font-size: 0.76rem; color: #8F8190; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <span>Contributor Edit Key: <code>{{ st.edit_token }}</code></span>
+          <a href="/stories/{{ st.id }}/edit?key={{ st.edit_token }}" target="_blank" style="color: var(--mauve); text-decoration: underline;">
+            Open in Contributor Editor ↗
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Card Footer Actions (Only for Pending or Rejected items) -->
+      {% if st.status != 'approved' %}
+      <div style="background: var(--soft-grey-light); padding: 1rem 1.75rem; border-top: var(--border-subtle); display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        
+        <!-- Rejection Form -->
+        <form method="POST" action="/admin/stories/{{ st.id }}/reject" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <input 
+            type="text" 
+            name="admin_notes" 
+            placeholder="Rejection rationale (optional)..."
+            style="padding: 0.45rem 0.75rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.82rem; background: var(--white); width: 220px;"
+          >
+          <button type="submit" class="btn btn-secondary btn-sm" style="color: #C0392B; border-color: #E2B9BE;">
+            ✕ Reject
+          </button>
+        </form>
+
+        <!-- Approval Form -->
+        <form method="POST" action="/admin/stories/{{ st.id }}/approve" style="display: inline;">
+          <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this story and publish it to the public Stories Journal?');">
+            ✓ Approve & Publish to Stories Journal
+          </button>
+        </form>
+
+      </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; padding: 4rem 2rem; background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📭</div>
+    <h3 style="color: var(--deep-plum); margin-bottom: 0.5rem;">No stories found</h3>
+    <p style="color: #796A7A; font-size: 0.92rem;">
+      There are currently no story submissions under the '<strong>{{ status_filter }}</strong>' filter.
+    </p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

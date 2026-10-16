@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Curation Reviews Moderation — Hidden Virasat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+
+  <!-- Breadcrumbs & Actions -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="font-size: 0.85rem; color: #736474; margin-bottom: 0.25rem;">
+        <a href="/admin" style="color: var(--mauve);">Admin Dashboard</a> &gt; <span>Reviews Moderation</span>
+      </div>
+      <h1 style="font-size: 2.2rem; margin: 0;">Visitor Reflections Moderation</h1>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/admin" class="btn btn-secondary btn-sm">← Back to Overview</a>
+      <a href="/explore" target="_blank" class="btn btn-secondary btn-sm">View Directory ↗</a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div style="padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.92rem; 
+        {% if category == 'success' %}background: #EAF7EE; color: #205A2E; border: 1px solid #B8E4C4;
+        {% elif category == 'error' %}background: #FDF2F4; color: #721C24; border: 1px solid #F5C6CB;
+        {% else %}background: #F4EEF3; color: var(--mauve-dark); border: 1px solid #D6A3B0;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Filter Tabs -->
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--soft-grey); padding-bottom: 0.5rem;">
+    <a href="/admin/reviews?filter=all" class="btn btn-sm {% if filter_type != 'reported' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      All Reviews
+    </a>
+    <a href="/admin/reviews?filter=reported" class="btn btn-sm {% if filter_type == 'reported' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      ⚠️ Reported / Flagged Only
+    </a>
+  </div>
+
+  <!-- Reviews List -->
+  {% if reviews %}
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    {% for rev in reviews %}
+    <div style="background: var(--white); border-radius: var(--radius-md); border: {% if rev.reported_count > 0 or rev.status == 'flagged' %}2px solid #EAA3AE{% else %}var(--border-subtle){% endif %}; padding: 1.5rem; box-shadow: var(--shadow-xs);">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.85rem;">
+        <div>
+          <div style="font-size: 0.82rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">
+            Target Place:
+          </div>
+          <h3 style="font-size: 1.25rem; margin: 0; color: var(--deep-plum);">
+            <a href="/places/{{ rev.place_slug }}" target="_blank" style="color: var(--deep-plum); text-decoration: underline;">
+              {{ rev.place_name }}
+            </a>
+          </h3>
+          <div style="font-size: 0.82rem; color: #7C6D7D; margin-top: 3px;">
+            Author: <strong>{{ rev.author_name }}</strong> • Date: {{ rev.created_at }}
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <div style="color: #D48806; font-size: 1.15rem; letter-spacing: 2px;">
+            {{ '★' * rev.rating }}{{ '☆' * (5 - rev.rating) }}
+            <span style="font-size: 0.85rem; color: var(--deep-plum); font-weight: 600;">({{ rev.rating }}/5)</span>
+          </div>
+
+          <div style="margin-top: 0.35rem;">
+            {% if rev.reported_count > 0 %}
+            <span style="background: #FCE8E6; color: #C0392B; font-size: 0.76rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: var(--radius-full);">
+              🚨 Reported {{ rev.reported_count }} time(s)
+            </span>
+            {% else %}
+            <span style="background: #EAF7EE; color: #205A2E; font-size: 0.76rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: var(--radius-full);">
+              ✓ Normal
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Reflection Body -->
+      <div style="background: var(--warm-ivory); border-radius: var(--radius-sm); padding: 1rem; font-size: 0.95rem; color: #3E323F; line-height: 1.6; margin-bottom: 1.25rem; border-left: 3px solid var(--mauve);">
+        "{{ rev.review_text }}"
+      </div>
+
+      <!-- Moderation Actions -->
+      <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem;">
+        {% if rev.reported_count > 0 or rev.status != 'approved' %}
+        <form method="POST" action="/admin/reviews/{{ rev.id }}/approve" style="display: inline;">
+          <button type="submit" class="btn btn-secondary btn-sm" style="color: #2E7D32;">
+            ✓ Approve & Clear Reports
+          </button>
+        </form>
+        {% endif %}
+
+        <form method="POST" action="/admin/reviews/{{ rev.id }}/delete" style="display: inline;" onsubmit="return confirm('Permanently delete this review from the database?');">
+          <button type="submit" class="btn btn-secondary btn-sm" style="color: #C0392B; border-color: #E2B9BE;">
+            🗑️ Delete Inappropriate Review
+          </button>
+        </form>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; padding: 4rem 2rem; background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🕊️</div>
+    <h3 style="color: var(--deep-plum); margin-bottom: 0.5rem;">No reviews requiring attention</h3>
+    <p style="color: #796A7A; font-size: 0.92rem;">
+      All visitor reflections are currently in respectful standing.
+    </p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

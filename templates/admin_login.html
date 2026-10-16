@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Curation Portal Authorization — Hidden Virasat{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="padding-top: 5rem; padding-bottom: 7rem;">
+  <div style="max-width: 440px; margin: 0 auto; background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); padding: 2.5rem 2rem; box-shadow: var(--shadow-md); text-align: center;">
+    
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🏛️🔐</div>
+    <span class="eyebrow" style="margin-bottom: 0.25rem;">Protected Curation Desk</span>
+    <h2 style="font-size: 1.85rem; margin-bottom: 0.5rem; color: var(--deep-plum);">Archival Sign-In</h2>
+    <p style="font-size: 0.88rem; color: #726273; margin-bottom: 2rem; line-height: 1.5;">
+      Authorized portal for reviewing community submissions, verifying coordinates, and moderating visitor reflections.
+    </p>
+
+    {% if error %}
+    <div style="background: #FDF2F4; border: 1px solid #F5C6CB; border-radius: var(--radius-sm); padding: 0.85rem 1rem; color: #721C24; font-size: 0.86rem; margin-bottom: 1.5rem; text-align: left;">
+      ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="">
+      <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
+        <label class="form-label" for="password" style="font-size: 0.88rem;">Curation Passkey</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required 
+          placeholder="Enter authorization key..."
+          autofocus
+          style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; transition: border 0.2s;"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; margin-bottom: 1.25rem;">
+        Authenticate into Desk
+      </button>
+
+      <div style="font-size: 0.78rem; color: #8F8190;">
+        <a href="/" style="color: var(--mauve);">← Return to Public Homepage</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

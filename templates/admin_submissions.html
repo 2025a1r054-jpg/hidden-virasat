@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Curation Submissions Desk — Hidden Virasat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+
+  <!-- Breadcrumbs & Actions -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="font-size: 0.85rem; color: #736474; margin-bottom: 0.25rem;">
+        <a href="/admin" style="color: var(--mauve);">Admin Dashboard</a> &gt; <span>Community Submissions</span>
+      </div>
+      <h1 style="font-size: 2.2rem; margin: 0;">Community Submissions</h1>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/admin" class="btn btn-secondary btn-sm">← Back to Overview</a>
+      <a href="/suggest" target="_blank" class="btn btn-secondary btn-sm">+ Test Suggest Form ↗</a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div style="padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.92rem; 
+        {% if category == 'success' %}background: #EAF7EE; color: #205A2E; border: 1px solid #B8E4C4;
+        {% elif category == 'error' %}background: #FDF2F4; color: #721C24; border: 1px solid #F5C6CB;
+        {% else %}background: #F4EEF3; color: var(--mauve-dark); border: 1px solid #D6A3B0;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Filter Tabs -->
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--soft-grey); padding-bottom: 0.5rem;">
+    <a href="/admin/submissions?status=pending" class="btn btn-sm {% if status_filter == 'pending' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      Pending Review
+    </a>
+    <a href="/admin/submissions?status=approved" class="btn btn-sm {% if status_filter == 'approved' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      Approved & Published
+    </a>
+    <a href="/admin/submissions?status=rejected" class="btn btn-sm {% if status_filter == 'rejected' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      Rejected
+    </a>
+    <a href="/admin/submissions?status=all" class="btn btn-sm {% if status_filter == 'all' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 1.1rem;">
+      All Records
+    </a>
+  </div>
+
+  <!-- Submissions List -->
+  {% if submissions %}
+  <div style="display: flex; flex-direction: column; gap: 2rem;">
+    {% for sub in submissions %}
+    <div style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); box-shadow: var(--shadow-sm); overflow: hidden;">
+      
+      <!-- Card Header -->
+      <div style="background: var(--warm-ivory); padding: 1.25rem 1.75rem; border-bottom: var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <span class="badge badge-mauve" style="font-size: 0.72rem; margin-bottom: 0.35rem;">{{ sub.category }}</span>
+          <h2 style="font-size: 1.5rem; margin: 0; color: var(--deep-plum);">{{ sub.name }}</h2>
+          <div style="font-size: 0.82rem; color: #6E5F6F; margin-top: 2px;">
+            📍 {{ sub.location }}{% if sub.address %} • {{ sub.address }}{% endif %}
+            {% if sub.latitude and sub.longitude %}
+            • <span style="font-family: monospace;">({{ sub.latitude }}, {{ sub.longitude }})</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          {% if sub.status == 'pending' %}
+          <span style="background: #FFF3CD; color: #856404; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-weight: 700;">
+            ⏳ Awaiting Curation
+          </span>
+          {% elif sub.status == 'approved' %}
+          <span style="background: #D4EDDA; color: #155724; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-weight: 700;">
+            ✓ Published to Directory
+          </span>
+          {% else %}
+          <span style="background: #F8D7DA; color: #721C24; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-weight: 700;">
+            ✕ Rejected
+          </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Card Body: Details & Image -->
+      <div style="padding: 1.75rem; display: grid; grid-template-columns: 200px 1fr; gap: 2rem;">
+        
+        <!-- Image Preview -->
+        <div>
+          <img 
+            src="{{ sub.image_url or '/static/images/fallback-heritage.svg' }}" 
+            alt="{{ sub.name }}"
+            style="width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--soft-grey);"
+            onerror="this.onerror=null;this.src='/static/images/fallback-heritage.svg';"
+          >
+          <div style="font-size: 0.72rem; color: #8A7B8B; margin-top: 0.5rem; word-break: break-all;">
+            Source: {{ sub.image_url[:40] }}{% if sub.image_url|length > 40 %}...{% endif %}
+          </div>
+        </div>
+
+        <!-- Description & Metadata -->
+        <div>
+          <div style="margin-bottom: 1rem;">
+            <strong style="font-size: 0.85rem; color: var(--mauve-dark); text-transform: uppercase;">Short Description:</strong>
+            <p style="margin-top: 0.25rem; font-size: 0.95rem; color: #3E323F; line-height: 1.55;">
+              {{ sub.short_desc }}
+            </p>
+          </div>
+
+          {% if sub.history %}
+          <div style="margin-bottom: 1rem;">
+            <strong style="font-size: 0.85rem; color: var(--mauve-dark); text-transform: uppercase;">Historical Chronicle:</strong>
+            <p style="margin-top: 0.25rem; font-size: 0.9rem; color: #4F4250; line-height: 1.5;">
+              {{ sub.history }}
+            </p>
+          </div>
+          {% endif %}
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; background: var(--warm-ivory); padding: 0.85rem 1rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: #6E5F6F;">
+            <div>
+              <strong>Submitter:</strong> {{ sub.submitter_name }}
+              {% if sub.submitter_email %}<br><span style="color: #8C7D8D;">({{ sub.submitter_email }})</span>{% endif %}
+            </div>
+            <div>
+              <strong>Things to See:</strong> {{ sub.things_to_see or 'N/A' }}
+            </div>
+            <div>
+              <strong>Best Time:</strong> {{ sub.best_time or 'October to March' }}
+            </div>
+            <div>
+              <strong>Date Submitted:</strong> {{ sub.created_at }}
+            </div>
+          </div>
+
+          {% if sub.admin_notes %}
+          <div style="margin-top: 1rem; background: #FDF2F4; border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.84rem; color: #721C24;">
+            <strong>Editorial Note:</strong> {{ sub.admin_notes }}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Card Footer Actions (Only for Pending or Rejected items) -->
+      {% if sub.status != 'approved' %}
+      <div style="background: var(--soft-grey-light); padding: 1rem 1.75rem; border-top: var(--border-subtle); display: flex; justify-content: flex-end; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        
+        <!-- Rejection Form -->
+        <form method="POST" action="/admin/submissions/{{ sub.id }}/reject" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+          <input 
+            type="text" 
+            name="admin_notes" 
+            placeholder="Rejection rationale (optional)..."
+            style="padding: 0.45rem 0.75rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.82rem; background: var(--white); width: 220px;"
+          >
+          <button type="submit" class="btn btn-secondary btn-sm" style="color: #C0392B; border-color: #E2B9BE;">
+            ✕ Reject
+          </button>
+        </form>
+
+        <!-- Approval Form -->
+        <form method="POST" action="/admin/submissions/{{ sub.id }}/approve" style="display: inline;">
+          <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this place and publish it to the public Jammu discovery directory?');">
+            ✓ Approve & Publish to Public Directory
+          </button>
+        </form>
+
+      </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; padding: 4rem 2rem; background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📭</div>
+    <h3 style="color: var(--deep-plum); margin-bottom: 0.5rem;">No submissions found</h3>
+    <p style="color: #796A7A; font-size: 0.92rem;">
+      There are currently no community submissions under the '<strong>{{ status_filter }}</strong>' filter.
+    </p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

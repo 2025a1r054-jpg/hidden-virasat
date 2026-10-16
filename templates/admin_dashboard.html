@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Curation Administration Desk — Hidden Virasat{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+
+  <!-- Header & Actions -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; border-bottom: var(--border-subtle); padding-bottom: 1.5rem;">
+    <div>
+      <span class="eyebrow">Archival Control Panel</span>
+      <h1 style="font-size: 2.2rem; margin-bottom: 0.25rem;">Curation Administration</h1>
+      <p style="font-size: 0.92rem; color: #6E5F6F; margin: 0;">
+        Review community suggested landmarks, moderate visitor reflections, and maintain directory integrity.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+      <a href="/admin/submissions" class="btn btn-primary btn-sm">📋 Places Queue ({{ pending_count }})</a>
+      <a href="/admin/stories" class="btn btn-primary btn-sm">📜 Stories Queue ({{ pending_stories }})</a>
+      <a href="/admin/reviews" class="btn btn-secondary btn-sm">💬 Reviews</a>
+      <a href="/admin/logout" class="btn btn-secondary btn-sm" style="color: #9E3544; border-color: #E2B9BE;">Sign Out</a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div style="padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.92rem; 
+        {% if category == 'success' %}background: #EAF7EE; color: #205A2E; border: 1px solid #B8E4C4;
+        {% elif category == 'error' %}background: #FDF2F4; color: #721C24; border: 1px solid #F5C6CB;
+        {% else %}background: #F4EEF3; color: var(--mauve-dark); border: 1px solid #D6A3B0;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- KPI Overview Stat Cards -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem; margin-bottom: 3rem;">
+    <div style="background: var(--white); border-radius: var(--radius-md); padding: 1.5rem; border: var(--border-subtle); box-shadow: var(--shadow-xs);">
+      <div style="font-size: 0.78rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+        Pending Places
+      </div>
+      <div style="font-size: 2.25rem; font-weight: 700; color: {% if pending_count > 0 %}#B86725{% else %}var(--deep-plum){% endif %}; font-family: var(--font-serif); line-height: 1;">
+        {{ pending_count }}
+      </div>
+      <div style="font-size: 0.78rem; color: #796A7A; margin-top: 0.5rem;">
+        Awaiting review
+      </div>
+    </div>
+
+    <div style="background: var(--white); border-radius: var(--radius-md); padding: 1.5rem; border: var(--border-subtle); box-shadow: var(--shadow-xs);">
+      <div style="font-size: 0.78rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+        Pending Stories
+      </div>
+      <div style="font-size: 2.25rem; font-weight: 700; color: {% if pending_stories > 0 %}#B86725{% else %}var(--deep-plum){% endif %}; font-family: var(--font-serif); line-height: 1;">
+        {{ pending_stories }}
+      </div>
+      <div style="font-size: 0.78rem; color: #796A7A; margin-top: 0.5rem;">
+        <a href="/admin/stories" style="color: var(--mauve); font-weight: 600;">Moderate Stories →</a>
+      </div>
+    </div>
+
+    <div style="background: var(--white); border-radius: var(--radius-md); padding: 1.5rem; border: var(--border-subtle); box-shadow: var(--shadow-xs);">
+      <div style="font-size: 0.78rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+        Approved & Published
+      </div>
+      <div style="font-size: 2.25rem; font-weight: 700; color: #2E7D32; font-family: var(--font-serif); line-height: 1;">
+        {{ approved_count }}
+      </div>
+      <div style="font-size: 0.78rem; color: #796A7A; margin-top: 0.5rem;">
+        Active community sites
+      </div>
+    </div>
+
+    <div style="background: var(--white); border-radius: var(--radius-md); padding: 1.5rem; border: var(--border-subtle); box-shadow: var(--shadow-xs);">
+      <div style="font-size: 0.78rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+        Total Public Places
+      </div>
+      <div style="font-size: 2.25rem; font-weight: 700; color: var(--deep-plum); font-family: var(--font-serif); line-height: 1;">
+        {{ total_places }}
+      </div>
+      <div style="font-size: 0.78rem; color: #796A7A; margin-top: 0.5rem;">
+        In active directory
+      </div>
+    </div>
+
+    <div style="background: var(--white); border-radius: var(--radius-md); padding: 1.5rem; border: var(--border-subtle); box-shadow: var(--shadow-xs);">
+      <div style="font-size: 0.78rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+        Community Reviews
+      </div>
+      <div style="font-size: 2.25rem; font-weight: 700; color: var(--deep-plum); font-family: var(--font-serif); line-height: 1;">
+        {{ total_reviews }}
+      </div>
+      <div style="font-size: 0.78rem; color: #796A7A; margin-top: 0.5rem;">
+        Total visitor reflections
+      </div>
+    </div>
+
+    <div style="background: var(--white); border-radius: var(--radius-md); padding: 1.5rem; border: var(--border-subtle); box-shadow: var(--shadow-xs);">
+      <div style="font-size: 0.78rem; color: var(--mauve); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+        Reported / Flagged
+      </div>
+      <div style="font-size: 2.25rem; font-weight: 700; color: {% if reported_reviews > 0 %}#C0392B{% else %}#2E7D32{% endif %}; font-family: var(--font-serif); line-height: 1;">
+        {{ reported_reviews }}
+      </div>
+      <div style="font-size: 0.78rem; color: #796A7A; margin-top: 0.5rem;">
+        Requires moderation
+      </div>
+    </div>
+  </div>
+
+  <!-- Two Column Layout: Recent Submissions & Recent Reviews -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+
+    <!-- Recent Submissions Card -->
+    <div style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); padding: 1.75rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.35rem; color: var(--deep-plum);">Recent Submissions</h3>
+        <a href="/admin/submissions" style="font-size: 0.84rem; color: var(--mauve); font-weight: 600;">View All →</a>
+      </div>
+
+      {% if recent_submissions %}
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for sub in recent_submissions %}
+        <div style="padding: 1rem; border-radius: var(--radius-sm); background: var(--warm-ivory); border: 1px solid var(--soft-grey); display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+          <div>
+            <div style="font-weight: 600; color: var(--deep-plum); font-size: 0.95rem;">{{ sub.name }}</div>
+            <div style="font-size: 0.78rem; color: #786979;">
+              📍 {{ sub.location }} • By <strong>{{ sub.submitter_name }}</strong>
+            </div>
+            <div style="font-size: 0.75rem; color: #9A8C9B; margin-top: 2px;">{{ sub.created_at }}</div>
+          </div>
+          <div>
+            {% if sub.status == 'pending' %}
+            <span style="background: #FFF3CD; color: #856404; font-size: 0.75rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-weight: 600;">Pending</span>
+            {% elif sub.status == 'approved' %}
+            <span style="background: #D4EDDA; color: #155724; font-size: 0.75rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-weight: 600;">Approved</span>
+            {% else %}
+            <span style="background: #F8D7DA; color: #721C24; font-size: 0.75rem; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-weight: 600;">Rejected</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="font-size: 0.88rem; color: #8C7D8D; font-style: italic;">No community submissions received yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Recent Reviews Moderation Card -->
+    <div style="background: var(--white); border-radius: var(--radius-md); border: var(--border-subtle); padding: 1.75rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.35rem; color: var(--deep-plum);">Recent Reviews</h3>
+        <a href="/admin/reviews" style="font-size: 0.84rem; color: var(--mauve); font-weight: 600;">Moderate All →</a>
+      </div>
+
+      {% if recent_reviews %}
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for rev in recent_reviews %}
+        <div style="padding: 1rem; border-radius: var(--radius-sm); background: var(--warm-ivory); border: 1px solid var(--soft-grey);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+            <div style="font-weight: 600; color: var(--deep-plum); font-size: 0.92rem;">
+              {{ rev.place_name or 'Heritage Place' }}
+            </div>
+            <div style="color: #D48806; font-size: 0.85rem;">
+              {{ '★' * rev.rating }}{{ '☆' * (5 - rev.rating) }}
+            </div>
+          </div>
+          <p style="font-size: 0.82rem; color: #584A59; margin-bottom: 0.5rem; line-height: 1.4;">
+            "{{ rev.review_text[:120] }}{% if rev.review_text|length > 120 %}...{% endif %}"
+          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #8F8190;">
+            <span>By {{ rev.author_name }}</span>
+            {% if rev.reported_count > 0 %}
+            <span style="color: #C0392B; font-weight: 600;">⚠️ Reported ({{ rev.reported_count }})</span>
+            {% else %}
+            <span style="color: #2E7D32;">✓ Normal</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="font-size: 0.88rem; color: #8C7D8D; font-style: italic;">No visitor reflections submitted yet.</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -59,8 +59,8 @@ class DeploymentReadinessTestCase(unittest.TestCase):
         self.assertTrue(img_dir.exists())
 
         conn = get_db_connection()
-        places = conn.execute("SELECT slug, image_url FROM places").fetchall()
-        stories = conn.execute("SELECT slug, image_url FROM stories").fetchall()
+        places = conn.execute("SELECT slug, image_url FROM places WHERE COALESCE(is_community, 0) = 0").fetchall()
+        stories = conn.execute("SELECT slug, image_url FROM stories WHERE COALESCE(is_community, 0) = 0").fetchall()
         conn.close()
 
         self.assertEqual(len(places), 15)

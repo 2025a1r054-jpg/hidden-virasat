@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Suggest a Heritage Sanctuary — Hidden Virasat Jammu{% endblock %}
+
+{% block meta_desc %}Contribute an undiscovered temple, forgotten Dogra fortress, local craft guild, or historic market to the living archives of Hidden Virasat Jammu.{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="padding-top: 3rem; padding-bottom: 5rem;">
+
+  <!-- Header Banner -->
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <span class="eyebrow">Community Heritage Portal</span>
+    <h1 style="font-size: 2.6rem; margin-bottom: 0.85rem;">Suggest a Forgotten Sanctuary</h1>
+    <p style="font-size: 1.05rem; color: #5A4C5B; max-width: 640px; margin: 0 auto; line-height: 1.6;">
+      Do you know of an ancient Dogra stepwell, a quiet shrine in the foothills, a master basohli artisan, or a bustling street bazaar unknown to guidebooks? Share it with our curation archives.
+    </p>
+  </div>
+
+  <!-- Success Notification -->
+  {% if success %}
+  <div style="background: #EAF7EE; border: 1px solid #B8E4C4; border-radius: var(--radius-md); padding: 2rem; margin-bottom: 2.5rem; text-align: center; box-shadow: var(--shadow-sm);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🏛️✨</div>
+    <h3 style="color: #205A2E; margin-bottom: 0.5rem; font-size: 1.6rem;">Thank You for Contributing to Duggar Virasat!</h3>
+    <p style="color: #2F6E3F; max-width: 580px; margin: 0 auto 1.5rem; line-height: 1.6;">
+      Your submission for <strong>"{{ submitted_name }}"</strong> has been received and queued with a <em>Pending</em> status. Our editorial team will review the historical details and coordinate data before publishing it to the public directory.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="/explore" class="btn btn-primary btn-sm">Explore Existing Sanctuaries</a>
+      <a href="/suggest" class="btn btn-secondary btn-sm">Suggest Another Place</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Validation Error Summary -->
+  {% if errors %}
+  <div style="background: #FDF2F4; border: 1px solid #F5C6CB; border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+    <h4 style="color: #721C24; margin-bottom: 0.75rem; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>⚠️</span> Please rectify the following items:
+    </h4>
+    <ul style="color: #721C24; padding-left: 1.5rem; line-height: 1.6; font-size: 0.92rem;">
+      {% for err in errors %}
+      <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if not success %}
+  <!-- Main Submission Form Card -->
+  <div class="planner-form-card" style="box-shadow: var(--shadow-md);">
+    <form action="/suggest" method="POST" enctype="multipart/form-data" id="suggest-form">
+      
+      <!-- Anti-Spam Honeypot Field (Invisible to human visitors) -->
+      <div style="display: none;" aria-hidden="true">
+        <label for="website_url">Leave this field blank</label>
+        <input type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- Section 1: Basic Identity -->
+      <div style="margin-bottom: 2rem; border-bottom: var(--border-subtle); padding-bottom: 1.5rem;">
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.35rem; color: var(--mauve-dark);">1. Landmark Identification</h3>
+        <p style="font-size: 0.85rem; color: #786979; margin-bottom: 1.25rem;">Provide the place name and cultural classification.</p>
+        
+        <div class="form-group">
+          <label class="form-label" for="name">
+            Place Name <span style="color: #C0392B;">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            required 
+            minlength="3" 
+            maxlength="100" 
+            placeholder="e.g. Jasrota Palace Ruins, Krimchi Stepwell, Purmandal Ghati"
+            value="{{ form_data.name if form_data else '' }}"
+            style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; transition: border 0.2s;"
+            onfocus="this.style.borderColor='var(--mauve)';"
+            onblur="this.style.borderColor='var(--soft-grey)';"
+          >
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="category">
+              Cultural Category <span style="color: #C0392B;">*</span>
+            </label>
+            <select 
+              id="category" 
+              name="category" 
+              required
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none; cursor: pointer;"
+            >
+              <option value="" disabled {% if not form_data or not form_data.category %}selected{% endif %}>Select category...</option>
+              {% for cat in categories %}
+              <option value="{{ cat }}" {% if form_data and form_data.category == cat %}selected{% endif %}>{{ cat }}</option>
+              {% endfor %}
+              <option value="Cultural Heritage & Sacred Sites" {% if form_data and form_data.category == 'Cultural Heritage & Sacred Sites' %}selected{% endif %}>Cultural Heritage & Sacred Sites</option>
+              <option value="Living Traditions & Crafts" {% if form_data and form_data.category == 'Living Traditions & Crafts' %}selected{% endif %}>Living Traditions & Crafts</option>
+              <option value="Culinary Heritage" {% if form_data and form_data.category == 'Culinary Heritage' %}selected{% endif %}>Culinary Heritage</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="location">
+              District / Area in Jammu <span style="color: #C0392B;">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="location" 
+              name="location" 
+              required 
+              placeholder="e.g. Akhnoor, Udhampur, Samba, Old City"
+              value="{{ form_data.location if form_data else '' }}"
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none;"
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="address">Specific Address or Landmark Landmark</label>
+          <input 
+            type="text" 
+            id="address" 
+            name="address" 
+            placeholder="e.g. Near Chenab Riverbank, Old Akhnoor Ghat, Jammu 181201"
+            value="{{ form_data.address if form_data else '' }}"
+            style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); outline: none;"
+          >
+        </div>
+      </div>
+
+      <!-- Section 2: Geographic Coordinates & Map Helper -->
+      <div style="margin-bottom: 2rem; border-bottom: var(--border-subtle); padding-bottom: 1.5rem;">
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.35rem; color: var(--mauve-dark);">2. Geographic Coordinates</h3>
+        <p style="font-size: 0.85rem; color: #786979; margin-bottom: 1rem;">
+          Accurate coordinates allow visitors to calculate distances and navigate directly. Click anywhere on the helper map or enter them manually.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label class="form-label" for="latitude">Latitude (° N)</label>
+            <input 
+              type="number" 
+              step="any" 
+              id="latitude" 
+              name="latitude" 
+              placeholder="e.g. 32.7266"
+              value="{{ form_data.latitude if form_data else '' }}"
+              style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--warm-ivory);"
+            >
+          </div>
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label class="form-label" for="longitude">Longitude (° E)</label>
+            <input 
+              type="number" 
+              step="any" 
+              id="longitude" 
+              name="longitude" 
+              placeholder="e.g. 74.8570"
+              value="{{ form_data.longitude if form_data else '' }}"
+              style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--warm-ivory);"
+            >
+          </div>
+        </div>
+
+        <div style="font-size: 0.8rem; color: #6F5E70; margin-bottom: 0.75rem;">
+          💡 <em>Tip: Click on the preview map below to auto-populate the coordinates for this site.</em>
+        </div>
+
+        <!-- Interactive Map Coordinate Picker -->
+        <div id="suggest-picker-map" style="height: 220px; border-radius: var(--radius-sm); border: 1px solid var(--soft-grey); margin-bottom: 1rem; position: relative;"></div>
+      </div>
+
+      <!-- Section 3: Cultural Chronicle & Description -->
+      <div style="margin-bottom: 2rem; border-bottom: var(--border-subtle); padding-bottom: 1.5rem;">
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.35rem; color: var(--mauve-dark);">3. Cultural & Historical Chronicle</h3>
+        <p style="font-size: 0.85rem; color: #786979; margin-bottom: 1.25rem;">Tell the story of this forgotten heritage site.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="short_desc">
+            Short Archival Summary <span style="color: #C0392B;">*</span>
+          </label>
+          <textarea 
+            id="short_desc" 
+            name="short_desc" 
+            required 
+            rows="3" 
+            minlength="20" 
+            maxlength="1200"
+            placeholder="Brief overview explaining what makes this site extraordinary and why travelers should seek it out (20 to 1,200 characters)..."
+            style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); resize: vertical;"
+          >{{ form_data.short_desc if form_data else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="history">Historical Origins & Dogra Dynasty Context (Optional)</label>
+          <textarea 
+            id="history" 
+            name="history" 
+            rows="3" 
+            placeholder="Who built or established this? Which era or Dogra ruler was it associated with?"
+            style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory); resize: vertical;"
+          >{{ form_data.history if form_data else '' }}</textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="things_to_see">Things to See or Experience</label>
+            <input 
+              type="text" 
+              id="things_to_see" 
+              name="things_to_see" 
+              placeholder="e.g. Fresco fragments, riverbank sunset, brass crafts"
+              value="{{ form_data.things_to_see if form_data else '' }}"
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory);"
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="best_time">Best Time to Visit</label>
+            <input 
+              type="text" 
+              id="best_time" 
+              name="best_time" 
+              placeholder="e.g. October to March, Early Morning"
+              value="{{ form_data.best_time if form_data else '' }}"
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory);"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Imagery & Submitter Details -->
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.35rem; color: var(--mauve-dark);">4. Imagery & Submitter Record</h3>
+        <p style="font-size: 0.85rem; color: #786979; margin-bottom: 1.25rem;">Upload an authentic photograph or provide an image URL with attribution.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label" for="image_file">Upload Photograph (.jpg, .png, .webp)</label>
+            <input 
+              type="file" 
+              id="image_file" 
+              name="image_file" 
+              accept=".jpg,.jpeg,.png,.webp"
+              style="width: 100%; padding: 0.6rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.88rem; background: var(--warm-ivory);"
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="image_url">Or Image URL</label>
+            <input 
+              type="url" 
+              id="image_url" 
+              name="image_url" 
+              placeholder="https://upload.wikimedia.org/..."
+              value="{{ form_data.image_url if form_data else '' }}"
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--warm-ivory);"
+            >
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="submitter_name">
+              Your Name <span style="color: #C0392B;">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="submitter_name" 
+              name="submitter_name" 
+              required 
+              minlength="2" 
+              maxlength="60" 
+              placeholder="e.g. Ananya Jamwal"
+              value="{{ form_data.submitter_name if form_data else '' }}"
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory);"
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="submitter_email">Your Email (Optional, for archival credit)</label>
+            <input 
+              type="email" 
+              id="submitter_email" 
+              name="submitter_email" 
+              placeholder="e.g. ananya@jammu.org"
+              value="{{ form_data.submitter_email if form_data else '' }}"
+              style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--soft-grey); border-radius: var(--radius-sm); font-size: 0.95rem; background: var(--warm-ivory);"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Archival Disclaimer Notice -->
+      <div style="background: var(--soft-grey-light); border-radius: var(--radius-sm); padding: 1rem 1.25rem; font-size: 0.82rem; color: #625363; line-height: 1.5; margin-bottom: 2rem;">
+        🛡️ <strong>Curatorial Integrity Notice:</strong> All community contributions are reviewed by the editorial team to verify geographic accuracy, Dogra historical relevance, and image permissions. Only vetted places are approved to appear in the public discovery index.
+      </div>
+
+      <!-- Submission Actions -->
+      <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+        <a href="/explore" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary" style="padding: 0.85rem 2.2rem; font-size: 1rem;">
+          📜 Submit for Archival Review
+        </button>
+      </div>
+
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Mini map for coordinate picking
+    const pickerEl = document.getElementById('suggest-picker-map');
+    if (!pickerEl) return;
+
+    const latInput = document.getElementById('latitude');
+    const lonInput = document.getElementById('longitude');
+
+    const defaultLat = latInput.value ? parseFloat(latInput.value) : 32.7266;
+    const defaultLon = lonInput.value ? parseFloat(lonInput.value) : 74.8570;
+
+    const pickerMap = L.map('suggest-picker-map', {
+      center: [defaultLat, defaultLon],
+      zoom: 12,
+      scrollWheelZoom: false
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 18
+    }).addTo(pickerMap);
+
+    let marker = null;
+    if (latInput.value && lonInput.value) {
+      marker = L.marker([defaultLat, defaultLon]).addTo(pickerMap);
+    }
+
+    pickerMap.on('click', (e) => {
+      const clickedLat = e.latlng.lat.toFixed(5);
+      const clickedLon = e.latlng.lng.toFixed(5);
+
+      latInput.value = clickedLat;
+      lonInput.value = clickedLon;
+
+      if (marker) {
+        marker.setLatLng(e.latlng);
+      } else {
+        marker = L.marker(e.latlng).addTo(pickerMap);
+      }
+      marker.bindPopup(`<strong>Selected Spot:</strong><br>${clickedLat}° N, ${clickedLon}° E`).openPopup();
+    });
+  });
+</script>
+{% endblock %}

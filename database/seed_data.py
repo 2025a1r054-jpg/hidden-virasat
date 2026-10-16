@@ -574,3 +574,63 @@ def seed_stories(conn):
         ))
     conn.commit()
     print(f"Seeded {len(STORIES_DATA)} stories successfully.")
+
+
+SAMPLE_REVIEWS = [
+    {
+        "place_slug": "mubarak-mandi-palace",
+        "author_name": "Aarav Sharma",
+        "rating": 5,
+        "review_text": "The royal courtyards and Gol Ghar have an evocative atmosphere overlooking the Tawi river. The blend of Rajasthani arches and European styles is truly mesmerizing."
+    },
+    {
+        "place_slug": "mubarak-mandi-palace",
+        "author_name": "Dr. Sunita Jamwal",
+        "rating": 4,
+        "review_text": "A must-visit heritage landmark for anyone wanting to understand Dogra history. Ongoing restoration is bringing back its forgotten grandeur."
+    },
+    {
+        "place_slug": "bahu-fort",
+        "author_name": "Vikramaditya Singh",
+        "rating": 5,
+        "review_text": "The views of Jammu city from the sandstone ramparts at sunset are unforgettable. The temple of Bawe Wali Mata is serene and deeply sacred."
+    },
+    {
+        "place_slug": "amar-mahal-palace-museum",
+        "author_name": "Meenakshi Devi",
+        "rating": 5,
+        "review_text": "Seeing the pure gold Dogra royal throne and the Nala-Damayanti miniature collection in person was the highlight of our cultural trip."
+    },
+    {
+        "place_slug": "raghunath-bazaar",
+        "author_name": "Rohan Gupta",
+        "rating": 4,
+        "review_text": "Lively heritage market filled with the scent of mountain walnuts, Kashmiri saffron, and hill spices. Great hospitality from local shopkeepers."
+    },
+    {
+        "place_slug": "akhnoor-fort-jia-pota",
+        "author_name": "Kavita Verma",
+        "rating": 5,
+        "review_text": "Standing beside the jade-green Chenab river where Raja Gulab Singh received his Raj Tilak gave me goosebumps. A peaceful, historic place."
+    }
+]
+
+
+def seed_reviews(conn):
+    """Seeds initial community reviews if table is empty."""
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM reviews")
+    count = cursor.fetchone()[0]
+    if count == 0:
+        for rev in SAMPLE_REVIEWS:
+            # Look up place_id
+            cursor.execute("SELECT id FROM places WHERE slug = ?", (rev["place_slug"],))
+            row = cursor.fetchone()
+            if row:
+                place_id = row[0]
+                cursor.execute("""
+                    INSERT INTO reviews (place_id, place_slug, author_name, rating, review_text, status, reported_count)
+                    VALUES (?, ?, ?, ?, ?, 'approved', 0)
+                """, (place_id, rev["place_slug"], rev["author_name"], rev["rating"], rev["review_text"]))
+        conn.commit()
+        print(f"Seeded {len(SAMPLE_REVIEWS)} initial community reviews.")

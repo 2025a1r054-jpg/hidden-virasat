@@ -42,10 +42,12 @@
       <nav>
         <ul class="nav-links">
           <li><a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
-          <li><a href="/explore" class="nav-link {% if request.path.startswith('/explore') or request.path.startswith('/places') %}active{% endif %}">Explore</a></li>
+          <li><a href="/explore" class="nav-link {% if request.path == '/explore' and not request.args.get('near') %}active{% endif %}">Explore</a></li>
+          <li><a href="/explore?near=1" class="nav-link {% if request.path == '/explore' and request.args.get('near') %}active{% endif %}">📍 Near Me</a></li>
           <li><a href="/map" class="nav-link {% if request.path == '/map' %}active{% endif %}">Interactive Map</a></li>
           <li><a href="/planner" class="nav-link {% if request.path == '/planner' %}active{% endif %}">Trip Planner</a></li>
           <li><a href="/stories" class="nav-link {% if request.path == '/stories' %}active{% endif %}">Local Stories</a></li>
+          <li><a href="/suggest" class="nav-link {% if request.path == '/suggest' %}active{% endif %}">Suggest Place</a></li>
           <li><a href="/about" class="nav-link {% if request.path == '/about' %}active{% endif %}">About</a></li>
         </ul>
       </nav>
@@ -118,9 +120,10 @@
         <div>
           &copy; 2026 <strong>HIDDEN VIRASAT</strong>. Developed as a College AI & Web Systems Project.
         </div>
-        <div style="display: flex; gap: 1.5rem;">
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
           <a href="/about" style="color: #A396A2;">Educational Project Notice</a>
           <a href="/map" style="color: #A396A2;">Jammu Coordinates (32.7266° N, 74.8570° E)</a>
+          <a href="/admin" style="color: #A396A2;">🔐 Curation Portal</a>
         </div>
       </div>
     </div>
